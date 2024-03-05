@@ -4,25 +4,15 @@ const Schema=mongoose.Schema;
 
 let userSchema=Schema({
 	email: { type: String, unique: true, lowercase: true },
-	username: String,
 	pass: { type: String, select: false },
+	registrat: {type: Date, default: Date.now },
 	lastlogin: Date,
-	telf: { type: String },
-	nom: { type: String },
-	cognoms: { type: String },
-	data_naixement: { type: Date },
-	direccio: [
-	      {
-	            carrer: String,
-	            numero: Number,
-	            porta: String,
-	            escala: String,
-	            pis: String,
-	            CP: Number,
-	            poblacio: String,
-	            provincia:String,
-	          },
-	],
+	telf: String,
+	nom: String ,
+	cognoms: String,
+	data_naixement: Date ,
+	direccions: [{type: Schema.Types.ObjectId, ref: 'Direccio' }],
+	establiments_fav:[{type: Schema.Types.ObjectId, ref: 'Establiments' }]
 });
 
 userSchema.pre('save', function(next) {

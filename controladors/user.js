@@ -1,15 +1,20 @@
 const bcrypt=require('bcrypt-node');
 const Token=require('../serveis/token.js');
 const User=require('../models/user');
-
+const moment=require('moment');
 async function postUser(req,res) {
 	let post=req.body;
+	try{
+		var data=moment(post.data_naixement, 'DD/MM/YYYY');
+	}catch (err) {
+		return res.status(500).send({message:`La data està escrita en format incorrecte${err}`});
+	}
 	let user=new User({
 		email:post.email,
 		username:post.username,
 		nom:post.nom,
 		cognoms:post.cognoms,
-		data_naixement:post.data_naixement,
+		data_naixement:data.toDate(),
 		pass:post.pass,
 		telf:post.telf
 	});
@@ -19,10 +24,6 @@ async function postUser(req,res) {
 	} catch (err) {
 		return res.status(500).send(`Ha sorgit l'error següent ${err}`);
 	}
-	user.save((err, usersaved)=>{
-		if (err) return res.status(500).send({message:`Error ${err}`});
-		return res.status(200).send({message:'Usuari creat', usersaved});
-	});
 }
 
 async function getUsers(req,res) {
