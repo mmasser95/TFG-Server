@@ -1,8 +1,8 @@
-const mongoose=require('mongoose');
-const Schema=mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 
-let establimentsSchema=Schema({
+let establimentsSchema = Schema({
     nom: String,
     descripció: String,
     direccio: { type: Schema.Types.ObjectId, ref: 'Direcció' },
@@ -12,4 +12,4 @@ let establimentsSchema=Schema({
     telf: { type: String },
 });
 
-module.exports=mongoose.model('Establiments', establimentsSchema);
+module.exports = mongoose.model('Establiments', establimentsSchema);

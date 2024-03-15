@@ -25,7 +25,12 @@ async function createEstabliment(req,res){
         let userId=res.locals.payload.sub;
         const establiment = new Establiments({
             nom:req.body.nom,
-            propietari:userId
+            descripció:req.body.descripció,
+            direccio:req.body.direccio,
+            latitude:req.body.latitude,
+            longitude:req.body.longitude,
+            responsable:userId,
+            telf:req.body.telf
         });
         const establimentSaved = await establiment.save();
         return res.status(200).send({establimentSaved});

@@ -54,9 +54,9 @@ async function updateRebost(req,res){
 async function deleteRebost(req,res){
     try {
         let userId=res.locals.payload.sub;
-        const rebost = await Rebosts.findOne({propietari:userId,_id:req.params.id});
-        if (!rebost) return res.status(404).send({message:"No s'ha trobat cap rebost"});
-        const rebostDeleted = await rebost.remove();
+        const rebostDeleted = await Rebosts.findOneAndDelete({propietari:userId,_id:req.params.id});
+        if (!rebostDeleted) return res.status(404).send({message:"No s'ha trobat cap rebost"});
+        //const rebostDeleted = await rebost.remove();
         return res.status(200).send({rebostDeleted});
     } catch (error) {
         return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});

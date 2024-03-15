@@ -1,11 +1,11 @@
-const mongoose=require('mongoose');
-const Schema=mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-let ofertesSchema=Schema({
+let ofertesSchema = Schema({
     establiment: { type: Schema.Types.ObjectId, ref: 'Establiments' },
-    articles: [{ type: Schema.Types.ObjectId, ref: 'Articles' }],
+    descripcio: String,
     preu: Number,
-    divisa:String,
+    divisa: String,
 });
 
-module.exports=mongoose.model('Ofertes', ofertesSchema);
+module.exports = mongoose.model('Ofertes', ofertesSchema);
