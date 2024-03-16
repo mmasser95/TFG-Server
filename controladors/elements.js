@@ -1,22 +1,26 @@
 const Elements=require('../models/elements');
+const rebosts = require('../models/rebosts');
 const Rebosts=require('../models/rebosts');
 async function getAllElements(req,res){
     try{
         const rebostId=req.params.rebostId;
-        const rebost=await Rebosts.findOne({_id:rebostId});
-        if (!rebost) return res.status(404).send({message:"No s'ha trobat cap rebost"});
-        const elements=await Elements.find({_id:rebost.elements});
+        const rebost=await Rebosts.findOne({_id:rebostId})
+        if(!rebost) return res.status(404).send({message:"No s'ha trobat cap element"});
+        const elements=rebost.elements;
         if(!elements) return res.status(404).send({message:"No s'ha trobat cap element"});
-        return res.status(200).send({elements});
+        return res.status(200).send({elements})
     }catch(error){
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
+        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`})
     }
 }
 
 async function getElement(req,res){
     try{
+        const rebostId=req.params.rebostId
+        const rebost=await Rebosts.findOne({_id: rebostId});
+        if(!rebost) return res.status(404).send({message:"No s'ha trobat cap element"});
         const elementId=req.params.elementId;
-        const element=await Elements.findOne({_id:elementId});
+        const element=await rebost.elements.id(elementId);
         if (!element) return res.status(404).send({message:"No s'ha trobat cap element"});
         return res.status(200).send({element});
     }catch(error){
@@ -26,16 +30,15 @@ async function getElement(req,res){
 
 async function createElement(req,res){
     try{
-        let rebostId=req.body.rebostId;
+        let rebostId=req.params.rebostId;
         const rebost = await Rebosts.findOne({_id:rebostId});
         if (!rebost) return res.status(404).send({message:"No s'ha trobat cap rebost"});
-        const element = new Elements({
+        const element = {
             article:req.body.article,
             data_compra:req.body.data_compra,
             data_caducitat:req.body.data_caducitat
-        });
-        const elementSaved = await element.save();
-        rebost.elements.push(elementSaved._id);
+        };
+        rebost.elements.push(element)
         const rebostSaved = await rebost.save();
         return res.status(200).send({elementSaved,rebostSaved});
     }catch(error){
@@ -45,14 +48,32 @@ async function createElement(req,res){
 
 async function updateElement(req,res){
     try{
+        const rebostId = req.params.rebostId;
+        // const rebost= await Rebosts.findOne({_id: rebostId});
+        // if(!rebost) return res.status(404).send({message:`No s'ha trobat cap rebost`});
         const elementId=req.params.elementId;
-        const element=await Elements.findOne({_id:elementId});
-        if (!element) return res.status(404).send({message:"No s'ha trobat cap element"});
-        element.article=req.body.article;
-        element.data_compra=req.body.data_compra;
-        element.data_caducitat=req.body.data_caducitat;
-        const elementUpdated = await element.save();
-        return res.status(200).send({elementUpdated});
+        // const element=rebost.elements.id(elementId);
+        // if (!element) return res.status(404).send({message:"No s'ha trobat cap element"});
+        // element.article=req.body.article;
+        // element.data_compra=req.body.data_compra;
+        // element.data_caducitat=req.body.data_caducitat;
+        // rebost.elements.id(elementId).deleteOne();
+        // rebost.elements.push(element);
+        // return res.status(200).send({elementUpdated});
+        Rebosts.findOneAndUpdate({
+            '_id':rebostId,
+            'elements._id':elementId
+        },{
+            '$set':{
+                "elements.$.article":req.body.article,
+                "elements.$.data_compra":req.body.data_compra,
+                "elements.$.data_caducitat":req.body.data_caducitat,
+            }
+        },(err,elementUpdated)=>{
+            if(err) return res.status(500).send({message:`Ha sorgit l'error següent ${error}`})
+            if(!elementUpdated) return res.status(404).send({message:"No s'ha trobat l'element"});
+            return res.status(200).send({elementUpdated})
+        })
     }catch(error){
         return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
     }
@@ -60,14 +81,15 @@ async function updateElement(req,res){
 
 async function deleteElement(req,res){
     try{
+        const rebostId=req.params.rebostId;
+        const rebost=await Rebosts.findOne({_id: rebostId});
+        if(!rebost) return res.status(404).send({message:"No s'ha trobat cap element"});
         const elementId=req.params.elementId;
-        const element=await Elements.findOneAndDelete({_id:elementId});
+        const element=await rebost.elements.id(elementId);
         if (!element) return res.status(404).send({message:"No s'ha trobat cap element"});
-        const rebosts=await Rebosts.find({elements:element._id});
-        for (rebost of rebosts) {
-            rebost.elements.splice(rebost.elements.indexOf(element._id),1);
-            await rebost.save();
-        }
+        element.deleteOne();
+        await rebost.save()
+        return res.status(200).send({elementDeleted:element});
     }
     catch(error){
         return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});

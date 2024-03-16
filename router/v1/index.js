@@ -30,10 +30,10 @@ router
 //elements
 router
     .get('/rebosts/:rebostId/elements', elementsCtrl.getAllElements)
-    .get('/elements/:elementId', elementsCtrl.getElement)
-    .post('/elements', elementsCtrl.createElement)
-    .put('/elements/:elementId', elementsCtrl.updateElement)
-    .delete('/elements/:elementId', elementsCtrl.deleteElement);
+    .get('/rebosts/:rebostId/elements/:elementId', elementsCtrl.getElement)
+    .post('/rebosts/:rebostId/elements', elementsCtrl.createElement)
+    .put('/rebosts/:rebostId/elements/:elementId', elementsCtrl.updateElement)
+    .delete('/rebosts/:rebostId/elements/:elementId', elementsCtrl.deleteElement);
 
 //articles
 router

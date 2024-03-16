@@ -38,6 +38,7 @@ async function getUsers(req,res) {
 
 async function logIn(req,res) {
 	let post=req.body;
+	console.log(post)
 	let query=User.findOne({email:post.email});
 	query.select('email nom pass _id');
 	try {
