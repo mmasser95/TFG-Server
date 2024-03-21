@@ -1,21 +1,21 @@
 const bcrypt=require('bcrypt-node');
 const Token=require('../serveis/token.js');
 const User=require('../models/user');
-const moment=require('moment');
+const parse = require('date-fns/parse')
 async function postUser(req,res) {
 	let post=req.body;
 	try{
-		var data=moment(post.data_naixement, 'DD/MM/YYYY');
+		var data=parse.parse(post.data_naixement, 'dd/MM/yyyy', new Date());
 	}catch (err) {
 		return res.status(500).send({message:`La data està escrita en format incorrecte${err}`});
 	}
 	let user=new User({
-		email:post.email,
+		correu:post.correu,
 		username:post.username,
 		nom:post.nom,
 		cognoms:post.cognoms,
-		data_naixement:data.toDate(),
-		pass:post.pass,
+		data_naixement:data,
+		contrasenya:post.contrasenya,
 		telf:post.telf
 	});
 	try {
@@ -38,13 +38,12 @@ async function getUsers(req,res) {
 
 async function logIn(req,res) {
 	let post=req.body;
-	console.log(post)
 	let query=User.findOne({email:post.email});
-	query.select('email nom pass _id');
+	query.select('correu nom contrasenya _id');
 	try {
 		let user=await query.exec();
 		if (!user) return res.status(404).send({message:`L'usuari no existeix`})
-		bcrypt.compare(post.pass,user.pass,(err, result)=>{
+		bcrypt.compare(post.contrasenya,user.contrasenya,(err, result)=>{
 			if (err) return res.status(500).send({message: `Hi ha hagut un error al moment de comparar les contrassenyes: ${err}`});
 			if (!result) return res.status(401).send({message:'Contrassenya incorrecta'});
 			return res.status(200).send({

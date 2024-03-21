@@ -3,38 +3,38 @@ const bcrypt=require('bcrypt-node');
 const Schema=mongoose.Schema;
 
 let userSchema=Schema({
-	email: { type: String, unique: true, lowercase: true },
-	pass: { type: String, select: false },
-	registrat: {type: Date, default: Date.now },
-	lastlogin: Date,
-	telf: String,
 	nom: String ,
 	cognoms: String,
-	data_naixement: Date ,
-	direccions: [{type: Schema.Types.ObjectId, ref: 'Direccio' }],
-	establiments_fav:[{type: Schema.Types.ObjectId, ref: 'Establiments' }]
+	correu: { type: String, unique: true, lowercase: true },
+	contrasenya: { type: String, select: false },
+	telf: String,
+	data_naixement: Date,
+	estat_compte:Boolean,
+	data_registre: {type: Date, default: Date.now },
+	ultima_sessio: {type:Date, default:Date.now},
 });
 
 userSchema.pre('save', function(next) {
 	  let user = this;
-	  if (!user.isModified('pass')) return next();
+	  user.data_registre=new Date();
+	  if (!user.isModified('contrasenya')) return next();
 	  bcrypt.genSalt(10, (err, salt) => {
 		      if (err) return next();
-		      bcrypt.hash(user.pass, salt, null, (err, hash) => {
+		      bcrypt.hash(user.contrasenya, salt, null, (err, hash) => {
 			            if (err) return next(err);
-			            user.pass = hash;
+			            user.contrasenya = hash;
 			            next();
 			          });
 		    });
 });
 userSchema.pre('update', function(next) {
 	  let user = this;
-	  if (!user.isModified('pass')) return next();
+	  if (!user.isModified('contrasenya')) return next();
 	  bcrypt.genSalt(10, (err, salt) => {
 		      if (err) return next();
-		      bcrypt.hash(user.pass, salt, null, (err, hash) => {
+		      bcrypt.hash(user.contrasenya, salt, null, (err, hash) => {
 			            if (err) return next(err);
-			            user.pass = hash;
+			            user.contrasenya = hash;
 			            next();
 			          });
 		    });
