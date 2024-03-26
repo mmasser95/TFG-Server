@@ -14,9 +14,10 @@ async function postUser(req,res) {
 		username:post.username,
 		nom:post.nom,
 		cognoms:post.cognoms,
-		data_naixement:data,
+		data_naixement:post.data_naixement,
 		contrasenya:post.contrasenya,
-		telf:post.telf
+		telf:post.telf,
+		proveidor:'local',
 	});
 	try {
 		await user.save();
@@ -38,16 +39,16 @@ async function getUsers(req,res) {
 
 async function logIn(req,res) {
 	let post=req.body;
-	let query=User.findOne({email:post.email});
+	let query=User.findOne({correu:post.correu});
 	query.select('correu nom contrasenya _id');
 	try {
 		let user=await query.exec();
-		if (!user) return res.status(404).send({message:`L'usuari no existeix`})
+		if (!user) return res.status(401).send({message:`Usuari o contrasenya incorrecta`})
 		bcrypt.compare(post.contrasenya,user.contrasenya,(err, result)=>{
 			if (err) return res.status(500).send({message: `Hi ha hagut un error al moment de comparar les contrassenyes: ${err}`});
-			if (!result) return res.status(401).send({message:'Contrassenya incorrecta'});
+			if (!result) return res.status(401).send({message:'Usuari o contrasenya incorrecta'});
 			return res.status(200).send({
-				token: Token.createToken(user),
+				token: Token.createUserToken(user),
 				user_id: user._id,
 				message:'Login correcte!'
 			});
@@ -84,6 +85,10 @@ function verificarTokenUsuari(req,res) {
 		.catch((err) => {
 			return res.status(err.status).send(err.message);
 		});
+}
+
+async function loginGoogle(req, res) {
+
 }
 module.exports={
 	postUser,

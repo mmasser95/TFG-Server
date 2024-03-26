@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let ofertesSchema = Schema({
-    establiment: { type: Schema.Types.ObjectId, ref: 'Establiments' },
     nom:String,
     preu: Number,
     descripcio: String,
