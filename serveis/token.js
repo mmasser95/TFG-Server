@@ -2,13 +2,16 @@ const jwt = require('jwt-simple');
 const moment = require('moment');
 const config = require('../config');
 
-function createToken(user) {
+function createToken(user,establiment=false) {
 	const payload={
 		sub:user._id,
 		iat:moment().unix(),
-		tipus:'user',
+		tipus:'client',
 		exp: moment().add(5,'days').unix()
 	};
+	if (establiment){
+		payload.tipus='establiment'
+	}	
 	return jwt.encode(payload,config.SECRET_TOKEN);
 }
 

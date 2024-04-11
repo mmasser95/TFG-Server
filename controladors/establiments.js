@@ -1,73 +1,134 @@
-const Establiments=require('../models/establiments');
+const EstablimentsService = require('../serveis/establiments');
 
-async function getAllEstabliments(req,res){
-    try {
-        const establiments = await Establiments.find({});
-        if (!establiments) return res.status(404).send({message:"No s'ha trobat cap establiment"});
-        return res.status(200).send({establiments});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function getAllEstabliments(req, res) {
+  try {
+    const establiments = await EstablimentsService.getAllEstabliments();
+    return res.status(200).send({ establiments });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-async function getEstabliment(req,res){
-    try {
-        const establiment = await Establiments.findOne({_id:req.params.id});
-        if (!establiment) return res.status(404).send({message:"No s'ha trobat cap establiment"});
-        return res.status(200).send({establiment});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function getEstabliment(req, res) {
+  try {
+    const establiment = await EstablimentsService.getEstabliment(req.params.id);
+    return res.status(200).send({ establiment });
+  } catch (error) {
+    if ((error = '404'))
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-async function createEstabliment(req,res){
-    try {
-        let userId=res.locals.payload.sub;
-        const establiment = new Establiments({
-            nom:req.body.nom,
-            descripció:req.body.descripció,
-            direccio:req.body.direccio,
-            latitude:req.body.latitude,
-            longitude:req.body.longitude,
-            responsable:userId,
-            telf:req.body.telf
-        });
-        const establimentSaved = await establiment.save();
-        return res.status(200).send({establimentSaved});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function createEstabliment(req, res) {
+  try {
+    const establimentSaved = await EstablimentsService.signInEstabliment(
+      req.body
+    );
+    return res.status(200).send({ establimentSaved });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-async function updateEstabliment(req,res){
-    try {
-        let userId=res.locals.payload.sub;
-        const establiment=await Establiments.findOne({_id:req.params.id});
-        if (!establiment) return res.status(404).send({message:"No s'ha trobat cap establiment"});
-        establiment.nom=req.body.nom;
-        const establimentUpdated = await establiment.save();
-        return res.status(200).send({establimentUpdated});
-    }catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function updateEstabliment(req, res) {
+  try {
+    let establimentId = res.locals.payload.sub;
+    const establimentUpdated = await EstablimentsService.updateEstabliment(
+      establimentId,
+      req.body
+    );
+    return res.status(200).send({ establimentUpdated });
+  } catch (error) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-async function deleteEstabliment(req,res){
-    try {
-        let userId=res.locals.payload.sub;
-        const establiment=await Establiments.findOne({_id:req.params.id});
-        if (!establiment) return res.status(404).send({message:"No s'ha trobat cap establiment"});
-        const establimentDeleted = await establiment.remove();
-        return res.status(200).send({establimentDeleted});
-    }catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function deleteEstabliment(req, res) {
+  try {
+    let establimentId = res.locals.payload.sub;
+    const establimentDeleted = await EstablimentsService.deleteEstabliment(
+      establimentId
+    );
+    return res.status(200).send({ establimentDeleted });
+  } catch (error) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-module.exports={
-    getAllEstabliments,
-    getEstabliment,
-    createEstabliment,
-    updateEstabliment,
-    deleteEstabliment
+async function login(req, res) {
+  let post = req.body;
+  try {
+    let info = await EstablimentsService.loginEstabliment(
+      post.correu,
+      post.contrasenya
+    );
+    return res.status(200).send({
+      ...info,
+      message: 'Login correcte',
+    });
+  } catch (err) {
+    if (err == '401')
+      return res
+        .status(401)
+        .send({ message: 'Correu o contrasenya incorrectes' });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${err}` });
+  }
 }
+
+async function updateDireccio(req, res) {
+  let post = req.body;
+  let establimentId = res.locals.payload.sub;
+  let userType = res.locals.payload.tipus;
+  if (userType == 'client')
+    return res.status(401).send({ message: 'No estas autoritzat' });
+  try {
+    let establimentUpdated = await EstablimentsService.updateDireccio(
+      establimentId,
+      post
+    );
+    return res
+      .status(200)
+      .send({ message: 'Direcció actualitzada', establimentUpdated });
+  } catch (err) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
+module.exports = {
+  getAllEstabliments,
+  getEstabliment,
+  createEstabliment,
+  updateEstabliment,
+  deleteEstabliment,
+  login,
+  updateDireccio,
+};
