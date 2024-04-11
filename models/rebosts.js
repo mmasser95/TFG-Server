@@ -1,3 +1,23 @@
+<<<<<<< HEAD
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+let elementsSchema = Schema({
+  aliment: { type: Schema.Types.ObjectId, ref: 'Articles' },
+  data_creacio: Date,
+  data_modificacio: Date,
+  data_compra: Date,
+  data_caducitat: Date,
+  quantitat: Number,
+  q_unitat: String,
+});
+
+let rebostsSchema = Schema({
+  nom: String,
+  descripcio: String,
+  data_creacio: Date,
+  data_modificacio: Date,
+  elements: [elementsSchema],
+=======
 const mongoose=require('mongoose');
 const Schema=mongoose.Schema;
 
@@ -14,6 +34,7 @@ let rebostsSchema=Schema({
     elements:[elementsSchema],
     data_creacio:{type:Date, default:Date.now},
     data_modificacio:{type:Date, default:Date.now},
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 });
 
-module.exports=mongoose.model('Rebosts', rebostsSchema);
+module.exports = rebostsSchema;

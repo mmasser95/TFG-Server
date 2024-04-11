@@ -14,6 +14,19 @@ function createUserToken(user) {
   return jwt.encode(payload, config.SECRET_TOKEN);
 }
 
+<<<<<<< HEAD
+function createToken(user,establiment=false) {
+	const payload={
+		sub:user._id,
+		iat:moment().unix(),
+		tipus:'client',
+		exp: moment().add(5,'days').unix()
+	};
+	if (establiment){
+		payload.tipus='establiment'
+	}	
+	return jwt.encode(payload,config.SECRET_TOKEN);
+=======
 function createEstablimentToken(establiment){
   const payload={
     sub:establiment._id,
@@ -22,6 +35,7 @@ function createEstablimentToken(establiment){
     exp:getUnixTime(addDays(new Date(), 5)),
   }
   return jwt.encode(payload, config.SECRET_TOKEN);
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 }
 
 function decodeToken(token) {

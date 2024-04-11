@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+const Token = require('../serveis/token.js');
+const UserService = require('../serveis/users');
+
+async function postUser(req, res) {
+  try {
+    user = UserService.signInUser(req.body);
+    return res
+      .status(200)
+      .send({ userSaved: user, message: 'Usuari registrat correctament!' });
+  } catch (err) {
+    return res.status(500).send(`Ha sorgit l'error següent ${err}`);
+  }
+=======
 const bcrypt=require('bcrypt-node');
 const Token=require('../serveis/token.js');
 const User=require('../models/user');
@@ -25,18 +39,34 @@ async function postUser(req,res) {
 	} catch (err) {
 		return res.status(500).send(`Ha sorgit l'error següent ${err}`);
 	}
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 }
 
-async function getUsers(req,res) {
-	try {
-		const users = await User.find({});
-		return res.status(200).send({users});
-	} catch (error) {
-		return res.status(500).send({error});
-	}
-	
+async function getUsers(req, res) {
+  try {
+    const users = await UserService.getAllUsers();
+    return res.status(200).send({ users });
+  } catch (error) {
+    return res.status(500).send({ error });
+  }
 }
 
+<<<<<<< HEAD
+async function logIn(req, res, next) {
+  let post = req.body;
+  try {
+    loginInfo = await UserService.loginUser(post.correu, post.contrasenya);
+    return res.status(200).send({
+      ...loginInfo,
+      message: 'Login correcte!',
+    });
+  } catch (err) {
+    if (err == '404') return next();
+    if (err == '401')
+      return res.status(401).send({ message: 'Login incorrecte' });
+    return res.status(500).send({ message: `Error ${err}` });
+  }
+=======
 async function logIn(req,res) {
 	let post=req.body;
 	let query=User.findOne({correu:post.correu});
@@ -57,20 +87,36 @@ async function logIn(req,res) {
 		return res.status(500).send({message:`Error ${err}`});
 		
 	}
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 }
 
-async function getMyUser(req,res) {
-	let user_id=res.locals.payload.sub;
-	try {
-		let user= await User.findOne({_id:user_id});
-		if (!user) return res.status(404).send({message:"No s'ha trobat l'usuari"});
-		return res.status(200).send({user});
-	} catch (err) {
-		return res.status(500).send({message:`Error ${err}`});
-	}
-
+async function getMyUser(req, res) {
+  let user_id = res.locals.payload.sub;
+  try {
+    let user = await UserService.getUser(user_id);
+    return res.status(200).send({ user });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'usuari" });
+    return res.status(500).send({ message: `Error ${err}` });
+  }
 }
 
+<<<<<<< HEAD
+function verificarTokenUsuari(req, res) {
+  let post = req.body;
+  Token.decodeToken(post.token)
+    .then((result) => {
+      return res.status(200).send({
+        token: Token.createToken({ _id: result.sub }),
+        user_id: result.sub,
+        message: 'Token renovat',
+      });
+    })
+    .catch((err) => {
+      return res.status(err.status).send(err.message);
+    });
+=======
 function verificarTokenUsuari(req,res) {
 	let post=req.body;
 	Token
@@ -96,4 +142,12 @@ module.exports={
 	logIn,
 	getMyUser,
 	verificarTokenUsuari,
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 }
+module.exports = {
+  postUser,
+  getUsers,
+  logIn,
+  getMyUser,
+  verificarTokenUsuari,
+};

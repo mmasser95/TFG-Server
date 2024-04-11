@@ -1,3 +1,66 @@
+<<<<<<< HEAD
+const OfertesService = require('../serveis/ofertes');
+
+async function getAllOfertes(req, res) {
+  try {
+    let ofertes = await OfertesService.getAllOfertes(res.locals.payload.sub);
+    return res.status(200).send({ ofertes });
+  } catch (error) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap oferta disponible" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
+async function getOferta(req, res) {
+  try {
+    let oferta = await OfertesService.getOferta(
+      res.locals.payload.sub,
+      req.params.id
+    );
+    return res.status(200).send({ oferta });
+  } catch (error) {
+    if (!oferta)
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap oferta disponible" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
+async function createOferta(req, res) {
+  try {
+    const ofertaSaved = await OfertesService.createOferta(
+      res.locals.payload.sub,
+      req.body
+    );
+    return res.status(201).send({ ofertaSaved });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
+async function updateOferta(req, res) {
+  try {
+    let ofertaUpdated = await OfertesService.updateOferta(
+      res.locals.payload.sub,
+      req.params.id
+    );
+    return res.status(200).send({ ofertaUpdated });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+=======
 const Ofertes = require('../models/ofertes.js');
 const parse=require('date-fns/parse').parse;
 async function getAllOfertes(req, res) {
@@ -74,22 +137,27 @@ async function updateOferta(req, res) {
     } catch (error) {
         return res.status(500).send({ message: `Ha sorgit l'error següent ${error}` });
     }
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 }
 
 async function deleteOferta(req, res) {
-    try {
-        const oferta = await Ofertes.findOneAndDelete({ _id: req.params.ofertaId });
-        if (!oferta) return res.status(404).send({ message: "No s'ha trobat cap oferta disponible" });
-        return res.status(200).send({ ofertaDeleted: oferta });
-    } catch (error) {
-        return res.status(500).send({ message: `Ha sorgit l'error següent ${error}` });
-    }
+  try {
+    let deleted = await OfertesService.deleteOferta(
+      res.locals.payload.sub,
+      req.params.id
+    );
+    return res.status(200).send({ deletedOferta: deleted });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
 module.exports = {
-    getAllOfertes,
-    getOferta,
-    createOferta,
-    updateOferta,
-    deleteOferta
-}
+  getAllOfertes,
+  getOferta,
+  createOferta,
+  updateOferta,
+  deleteOferta,
+};
