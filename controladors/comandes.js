@@ -24,15 +24,19 @@ async function getComanda(req,res){
 }
 
 async function createComanda(req,res){
+    try{
+        var data=parse(req.body.data, 'dd/MM/yyyy', new Date());
+        
+    }catch(err){
+        return res.status(400).send({message: `Ha sorgit un error formatant la data`});
+    }
     try {
         let userId=res.locals.payload.sub;
         const comanda=new Comandes({
             user:userId,
-            ofertes:req.body.ofertes,
-            total:req.body.total,
-            data:req.body.data,
+            oferta:req.body.oferta,
+            data,
             pagat:req.body.pagat,
-            dataPagament:req.body.dataPagament,
         });
         const comandaSaved = await comanda.save();
         return res.status(201).send({comandaSaved});
@@ -42,15 +46,20 @@ async function createComanda(req,res){
 }
 
 async function updateComanda(req,res){
+    try{
+        var data=parse(req.body.data, 'dd/MM/yyyy', new Date());
+        
+    }catch(err){
+        return res.status(400).send({message: `Ha sorgit un error formatant la data`});
+    }
     try {
         let userId=res.locals.payload.sub;
         const comanda=await Comandes.findOne({_id:req.params.comandaId,user:userId});
         if (!comanda) return res.status(404).send({message:"No s'ha trobat cap comanda"});
-        comanda.ofertes=req.body.ofertes;
+        comanda.oferta=req.body.oferta;
         comanda.total=req.body.total;
-        comanda.data=req.body.data;
+        comanda.data=data;
         comanda.pagat=req.body.pagat;
-        comanda.dataPagament=req.body.dataPagament;
         const comandaUpdated = await comanda.save();
         return res.status(200).send({comandaUpdated});
     } catch (error) {

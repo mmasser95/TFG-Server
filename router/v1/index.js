@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+const passport = require('passport');
+const {googleStrategy}= require('../../serveis/google.js')
 const auth = require('../../middlewares/auth.js');
 const isAuth = auth.isAuth;
 
@@ -17,6 +18,7 @@ const avaluacionsCtrl = require('../../controladors/avaluacions.js');
 router
   .post('/signup', userCtrl.postUser)
   .get('/users', userCtrl.getUsers)
+<<<<<<< HEAD
   .post('/login', userCtrl.logIn, establimentsCtrl.login)
   .get('/profile', isAuth, userCtrl.getMyUser);
 
@@ -51,6 +53,10 @@ router
     isAuth,
     avaluacionsCtrl.deleteAvaluacio
   );
+=======
+  .post('/login', userCtrl.logIn)
+  .get('/profile', isAuth, userCtrl.getMyUser);
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 
 //direccions
 /*router
@@ -59,6 +65,9 @@ router
 .post()
 .put()
 .delete();*/
+
+//Google
+//router.get('/login/google', passport.authenticate(googleStrategy));
 
 //elements
 router
@@ -85,14 +94,33 @@ router
   .post('/rebosts', isAuth, rebostsCtrl.createRebost)
   .put('/rebosts/:id', isAuth, rebostsCtrl.updateRebost)
   .delete('/rebosts/:id', isAuth, rebostsCtrl.deleteRebost);
+<<<<<<< HEAD
+=======
+
+//establiments
+router
+  .get('/establiments', establimentsCtrl.getAllEstabliments)
+  .get('/establiments/:id', establimentsCtrl.getEstabliment)
+  .post('/establiments', isAuth, establimentsCtrl.createEstabliment)
+  .put('/establiments/:id', isAuth, establimentsCtrl.updateEstabliment)
+  .delete('/establiments/:id', isAuth, establimentsCtrl.deleteEstabliment);
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 
 //ofertes
 router
+<<<<<<< HEAD
   .get('/ofertes', isAuth, ofertesCtrl.getAllOfertes)
   .get('/ofertes/:id', isAuth, ofertesCtrl.getOferta)
   .post('/ofertes', isAuth, ofertesCtrl.createOferta)
   .put('/ofertes/:id', isAuth, ofertesCtrl.updateOferta)
   .delete('/ofertes/:id', isAuth, ofertesCtrl.deleteOferta);
+=======
+  .get('/ofertes', ofertesCtrl.getAllOfertes)
+  .get('/ofertes/:ofertaId', ofertesCtrl.getOferta)
+  .post('/ofertes', isAuth, ofertesCtrl.createOferta)
+  .put('/ofertes/:ofertaId', isAuth, ofertesCtrl.updateOferta)
+  .delete('/ofertes/:ofertaId', isAuth, ofertesCtrl.deleteOferta);
+>>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 
 //comandes
 router
