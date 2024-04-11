@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 let elementsSchema = Schema({
@@ -17,24 +16,6 @@ let rebostsSchema = Schema({
   data_creacio: Date,
   data_modificacio: Date,
   elements: [elementsSchema],
-=======
-const mongoose=require('mongoose');
-const Schema=mongoose.Schema;
-
-let elementsSchema=Schema({
-    article: { type: Schema.Types.ObjectId, ref: 'Articles' },
-    data_compra:Date,
-    data_caducitat:Date,
-});
-
-let rebostsSchema=Schema({
-    nom: String,
-    propietari: { type: Schema.Types.ObjectId, ref: 'User' },
-    descripcio:String,
-    elements:[elementsSchema],
-    data_creacio:{type:Date, default:Date.now},
-    data_modificacio:{type:Date, default:Date.now},
->>>>>>> d4d839f3a3086caaf00dc03915903307889af1c7
 });
 
 module.exports = rebostsSchema;
