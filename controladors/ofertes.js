@@ -51,7 +51,8 @@ async function updateOferta(req, res) {
   try {
     let ofertaUpdated = await OfertesService.updateOferta(
       res.locals.payload.sub,
-      req.params.id
+      req.params.id,
+      req.body
     );
     return res.status(200).send({ ofertaUpdated });
   } catch (error) {

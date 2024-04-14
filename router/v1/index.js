@@ -3,6 +3,8 @@ const router = express.Router();
 const auth = require('../../middlewares/auth.js');
 const isAuth = auth.isAuth;
 
+const { schemaV, validate } = require('../../middlewares/validators.js');
+
 const userCtrl = require('../../controladors/user.js');
 const articlesCtrl = require('../../controladors/articles.js');
 const rebostsCtrl = require('../../controladors/rebosts.js');
@@ -14,18 +16,29 @@ const avaluacionsCtrl = require('../../controladors/avaluacions.js');
 
 //users
 router
-  .post('/signup', userCtrl.postUser)
+  .post('/signup', schemaV('registreClient'), validate, userCtrl.postUser)
   .get('/users', userCtrl.getUsers)
-  .post('/login', userCtrl.logIn, establimentsCtrl.login)
+  .post(
+    '/login',
+    schemaV('login'),
+    validate,
+    userCtrl.logIn,
+    establimentsCtrl.login
+  )
   .get('/profile', isAuth, userCtrl.getMyUser);
 
 //establiments
 router
   .get('/establiments', establimentsCtrl.getAllEstabliments)
   .get('/establiments/:id', establimentsCtrl.getEstabliment)
-  .post('/establiments', establimentsCtrl.createEstabliment)
+  .post(
+    '/establiments',
+    schemaV('registreEstabliment'),
+    validate,
+    establimentsCtrl.createEstabliment
+  )
   .put('/establiments/:id', isAuth, establimentsCtrl.updateEstabliment)
-  .put('/establiments/:id/direccio', isAuth, establimentsCtrl.updateDireccio)
+  .put('/establiments/direccio', isAuth, establimentsCtrl.updateDireccio)
   .delete('/establiments/:id', isAuth, establimentsCtrl.deleteEstabliment);
 
 //avaluacions

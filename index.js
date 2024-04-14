@@ -7,12 +7,11 @@ const app = express();
 const router = require('./router/v1');
 const connectDB = require('./db.js');
 const config = require('./config.js');
-app.use(cors());
 
+app.use(cors());
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
 

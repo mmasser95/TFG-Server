@@ -32,7 +32,8 @@ async function loginEstabliment(correu, contrasenya) {
   if (bcrypt.compareSync(contrasenya, establiment.contrasenya)) {
     loginInfo = {
       token: Token.createToken(establiment, true),
-      establimentId: establiment._id,
+      userId: establiment._id,
+      userType:'establiment'
     };
     return loginInfo;
   }

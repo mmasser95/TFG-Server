@@ -34,6 +34,7 @@ async function loginUser(correu, contrasenya) {
     return {
       token: Token.createToken(user),
       userId: user._id,
+      userType:'client'
     };
   throw '401';
 }

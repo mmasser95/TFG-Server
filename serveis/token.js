@@ -4,22 +4,13 @@ const jwt = require('jwt-simple');
 const config = require('../config');
 const getUnixTime=getUnix.getUnixTime;
 const addDays=addDaysL.addDays
-function createUserToken(user) {
-  const payload = {
-    sub: user._id,
-    iat: getUnixTime( new Date()),
-    tipus: 'user',
-    exp: getUnixTime( addDays(new Date(), 5)),
-  };
-  return jwt.encode(payload, config.SECRET_TOKEN);
-}
 
 function createToken(user,establiment=false) {
 	const payload={
 		sub:user._id,
-		iat:moment().unix(),
+		iat:getUnixTime( new Date()),
 		tipus:'client',
-		exp: moment().add(5,'days').unix()
+		exp: getUnixTime( addDays(new Date(), 5)),
 	};
 	if (establiment){
 		payload.tipus='establiment'
