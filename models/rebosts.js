@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 let elementsSchema = Schema({
   aliment: { type: Schema.Types.ObjectId, ref: 'Articles' },
-  data_creacio: Date,
+  data_creacio: {type:Date,default:Date.now()},
   data_modificacio: Date,
   data_compra: Date,
   data_caducitat: Date,

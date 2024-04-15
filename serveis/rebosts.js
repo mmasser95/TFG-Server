@@ -4,12 +4,14 @@ const Users = require('../models/user');
 async function getAllRebosts(userId, userType) {
   let model = userType == 'client' ? Users : Establiments;
   let usuari = await model.findOne({ _id: userId });
+  if (!usuari) throw '404';
   return usuari.rebosts;
 }
 
 async function getRebost(userId, userType, rebostId) {
   let model = userType == 'client' ? Users : Establiments;
   let usuari = await model.findOne({ _id: userId });
+  if (!usuari) throw '404';
   let rebost = usuari.rebosts.id(rebostId);
   if (!rebost) throw '404';
   return rebost;
@@ -18,6 +20,7 @@ async function getRebost(userId, userType, rebostId) {
 async function createRebost(userId, userType, rebostInfo) {
   let model = userType == 'client' ? Users : Establiments;
   let usuari = await model.findOne({ _id: userId });
+  if (!usuari) throw '404';
   usuari.rebosts.push(rebostInfo);
   return await usuari.save();
 }

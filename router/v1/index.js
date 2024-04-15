@@ -77,11 +77,23 @@ router
 
 //elements
 router
-  .get('/rebosts/:rebostId/elements', elementsCtrl.getAllElements)
-  .get('/rebosts/:rebostId/elements/:elementId', elementsCtrl.getElement)
-  .post('/rebosts/:rebostId/elements', elementsCtrl.createElement)
-  .put('/rebosts/:rebostId/elements/:elementId', elementsCtrl.updateElement)
-  .delete('/rebosts/:rebostId/elements/:elementId', elementsCtrl.deleteElement);
+  .get('/rebosts/:rebostId/elements', isAuth, elementsCtrl.getAllElements)
+  .get(
+    '/rebosts/:rebostId/elements/:elementId',
+    isAuth,
+    elementsCtrl.getElement
+  )
+  .post('/rebosts/:rebostId/elements', isAuth, elementsCtrl.createElement)
+  .put(
+    '/rebosts/:rebostId/elements/:elementId',
+    isAuth,
+    elementsCtrl.updateElement
+  )
+  .delete(
+    '/rebosts/:rebostId/elements/:elementId',
+    isAuth,
+    elementsCtrl.deleteElement
+  );
 
 //articles
 router
