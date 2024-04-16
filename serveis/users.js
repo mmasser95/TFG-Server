@@ -34,7 +34,7 @@ async function loginUser(correu, contrasenya) {
     return {
       token: Token.createToken(user),
       userId: user._id,
-      userType:'client'
+      userType: 'client',
     };
   throw '401';
 }
@@ -64,8 +64,40 @@ async function updateUser(id, userInfo) {
 }
 
 async function deleteUser(id) {
-  let user = await getUser(id);
-  return await user.remove();
+  let user = await Users.findOneAndDelete({ _id: id });
+  if (!user) throw '404';
+  return user;
+}
+
+async function getPreferits(userId) {
+  let user = await Users.findOne({ _id: userId });
+  if (!user || !user.establiments_fav) throw '404';
+  return user.establiments_fav;
+}
+
+async function getPreferit(userId, establimentId) {
+  let preferits = await getPreferits(userId);
+  let preferit = await preferits.find((x) => x.establimentId === establimentId);
+  if (!preferit) return false;
+  return true;
+}
+
+async function marcarPreferit(userId, establimentId) {
+  let preferit = await Users.findOneAndUpdate(
+    { _id: userId },
+    { $push: { establiments_fav: { establimentId } } }
+  );
+  if (!preferit) throw '404';
+  return preferit;
+}
+
+async function desmarcarPreferit(userId, establimentId) {
+  let preferit = await Users.findOneAndUpdate(
+    { _id: userId },
+    { $pull: { establiments_fav: { establimentId } } }
+  );
+  if (!preferit) throw '404';
+  return preferit;
 }
 
 module.exports = {
@@ -75,4 +107,8 @@ module.exports = {
   signInUser,
   updateUser,
   deleteUser,
+  getPreferits,
+  getPreferit,
+  marcarPreferit,
+  desmarcarPreferit,
 };

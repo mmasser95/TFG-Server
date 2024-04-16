@@ -76,6 +76,26 @@ async function deleteEstabliment(req, res) {
   }
 }
 
+async function searchEstabliments(req, res) {
+  try {
+    let coordenades = [req.body.latitude, req.body.longitude];
+    let radi = req.body.radi;
+    let establiments = await EstablimentsService.searchEstabliments(
+      coordenades,
+      radi
+    );
+    return res.status(200).send({ establiments });
+  } catch (error) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
 async function login(req, res) {
   let post = req.body;
   try {
@@ -131,4 +151,5 @@ module.exports = {
   deleteEstabliment,
   login,
   updateDireccio,
+  searchEstabliments
 };

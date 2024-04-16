@@ -63,10 +63,68 @@ function verificarTokenUsuari(req, res) {
       return res.status(err.status).send(err.message);
     });
 }
+
+async function deleteUser(req, res) {
+  let userId = res.locals.payload.sub;
+  try {
+    let userDeleted = await UserService.deleteUser(userId);
+    return res.status(200).send({ userDeleted });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'usuari" });
+    return res.status(500).send({ message: `Error ${err}` });
+  }
+}
+
+async function getPreferits(req, res) {
+  let userId = res.locals.payload.sub;
+  try {
+    let preferits = await UserService.getPreferits(userId);
+    return res.status(200).send({ preferits });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'usuari" });
+    return res.status(500).send({ message: `Error ${err}` });
+  }
+}
+
+async function marcarPreferit(req, res) {
+  let userId = res.locals.payload.sub;
+  try {
+    let establimentId = req.body.establimentId;
+    let preferit = await UserService.marcarPreferit(userId, establimentId);
+    return res.status(200).send({ preferit });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'usuari" });
+    return res.status(500).send({ message: `Error ${err}` });
+  }
+}
+
+async function desmarcarPreferit(req, res) {
+  let userId = res.locals.payload.sub;
+  try {
+    let establimentId = req.body.establimentId;
+    let preferitDeleted = await UserService.desmarcarPreferit(
+      userId,
+      establimentId
+    );
+    return res.status(200).send({ preferitDeleted });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'usuari" });
+    return res.status(500).send({ message: `Error ${err}` });
+  }
+}
+
 module.exports = {
   postUser,
   getUsers,
   logIn,
   getMyUser,
   verificarTokenUsuari,
+  deleteUser,
+  getPreferits,
+  marcarPreferit,
+  desmarcarPreferit,
 };

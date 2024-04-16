@@ -14,7 +14,15 @@ let userSchema = Schema({
   data_registre: { type: Date, default: Date.now },
   ultima_sessio: Date,
   comandes_restants_descompte: Number,
-  establiments_fav: [{ type: Schema.Types.ObjectId, ref: 'Establiments' }],
+  establiments_fav: [
+    {
+      establimentId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Establiments',
+        unique: true,
+      },
+    },
+  ],
   rebosts: [rebostsSchema],
 });
 

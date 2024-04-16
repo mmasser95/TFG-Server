@@ -6,7 +6,7 @@ const isAuth = auth.isAuth;
 const { schemaV, validate } = require('../../middlewares/validators.js');
 
 const userCtrl = require('../../controladors/user.js');
-const articlesCtrl = require('../../controladors/articles.js');
+const alimentsCtrl = require('../../controladors/aliments.js');
 const rebostsCtrl = require('../../controladors/rebosts.js');
 const establimentsCtrl = require('../../controladors/establiments.js');
 const elementsCtrl = require('../../controladors/elements.js');
@@ -25,7 +25,11 @@ router
     userCtrl.logIn,
     establimentsCtrl.login
   )
-  .get('/profile', isAuth, userCtrl.getMyUser);
+  .get('/profile', isAuth, userCtrl.getMyUser)
+  .delete('/users', isAuth, userCtrl.deleteUser)
+  .get('/fav', isAuth, userCtrl.getPreferits)
+  .post('/fav', isAuth, userCtrl.marcarPreferit)
+  .delete('/fav', isAuth, userCtrl.desmarcarPreferit);
 
 //establiments
 router
@@ -39,7 +43,11 @@ router
   )
   .put('/establiments/:id', isAuth, establimentsCtrl.updateEstabliment)
   .put('/establiments/direccio', isAuth, establimentsCtrl.updateDireccio)
-  .delete('/establiments/:id', isAuth, establimentsCtrl.deleteEstabliment);
+  .delete('/establiments', isAuth, establimentsCtrl.deleteEstabliment);
+
+//Search Establiments
+
+router.post('/search', isAuth, establimentsCtrl.searchEstabliments);
 
 //avaluacions
 router
@@ -95,15 +103,15 @@ router
     elementsCtrl.deleteElement
   );
 
-//articles
+//aliments
 router
-  .get('/articles', articlesCtrl.getAllArticles)
-  .get('/articles/tipus', articlesCtrl.getAllTipus)
-  .get('/articles/tipus/:tipus', articlesCtrl.getAllArticlesByTipus)
-  .get('/articles/:id', articlesCtrl.getArticle)
-  .post('/articles', isAuth, articlesCtrl.createArticle)
-  .put('/articles/:id', isAuth, articlesCtrl.updateArticle)
-  .delete('/articles/:id', isAuth, articlesCtrl.deleteArticle);
+  .get('/aliments', alimentsCtrl.getAllAliments)
+  .get('/aliments/tipus', alimentsCtrl.getAllTipus)
+  .get('/aliments/tipus/:tipus', alimentsCtrl.getAllAlimentsByTipus)
+  .get('/aliments/:id', alimentsCtrl.getAliment)
+  .post('/aliments', isAuth, alimentsCtrl.createAliment)
+  .put('/aliments/:id', isAuth, alimentsCtrl.updateAliment)
+  .delete('/aliments/:id', isAuth, alimentsCtrl.deleteAliment);
 
 //rebosts
 router

@@ -11,7 +11,9 @@ let esquemaEstabliment = [
   'tipus',
   'web',
   'url_imatge',
+  'direccio',
 ];
+let esquemaDireccio = ['carrer', 'numero', 'CP', 'poblacio', 'provincia'];
 
 async function getAllEstabliments() {
   return await Establiments.find({});
@@ -33,7 +35,7 @@ async function loginEstabliment(correu, contrasenya) {
     loginInfo = {
       token: Token.createToken(establiment, true),
       userId: establiment._id,
-      userType:'establiment'
+      userType: 'establiment',
     };
     return loginInfo;
   }
@@ -45,6 +47,10 @@ async function signInEstabliment(establimentInfo) {
   for (const key of esquemaEstabliment) {
     myInfo[key] = establimentInfo[key];
   }
+  /*for (const key of esquemaDireccio) {
+    myInfo['direccio'][key] = establimentInfo['direccio'][key];
+  }*/
+  myInfo['coordenades'] = [establimentInfo.latitude, establimentInfo.longitude];
   let establiment = new Establiments({ ...myInfo });
   return await establiment.save();
 }
@@ -56,18 +62,41 @@ async function updateEstabliment(id, establimentInfo) {
       if (establimentInfo[key] != '') establiment[key] = establimentInfo[key];
     }
   }
+  /*for (const key of esquemaDireccio) {
+    if (establimentInfo['key'] != '')
+      establiment['direccio'][key] = establimentInfo['direccio'][key];
+  }*/
   return await establiment.save();
 }
 
 async function deleteEstabliment(id) {
-  let establiment = await getEstabliment(id);
-  return await establiment.remove();
+  let deleted = await Establiments.findOneAndDelete({ _id: id });
+  if (!deleted) throw '404';
+  return deleted;
 }
 
-async function updateDireccio(id,direccioInfo){
-    let establiment=await getEstabliment(id);
-    establiment.direccio=direccioInfo;
-    return await establiment.save()
+async function updateDireccio(id, direccioInfo) {
+  let establiment = await getEstabliment(id);
+  establiment.direccio = direccioInfo;
+  return await establiment.save();
+}
+
+async function searchEstabliments(coordenades, radi) {
+  let establiments = await Establiments.find({
+    coordenades: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: coordenades,
+        },
+        $maxDistance: radi * 1000,
+      },
+    },
+    'ofertes.active':true,
+    'ofertes.quantitatDisponible':{$gt:0}
+  });
+  if (!establiments) throw '404';
+  return establiments;
 }
 
 module.exports = {
@@ -77,5 +106,6 @@ module.exports = {
   signInEstabliment,
   updateEstabliment,
   deleteEstabliment,
-  updateDireccio
+  updateDireccio,
+  searchEstabliments,
 };

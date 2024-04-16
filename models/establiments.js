@@ -8,7 +8,6 @@ const rebostsSchema = require('./rebosts');
 let direccioSchema = Schema({
   carrer: String,
   numero: Number,
-  porta: String,
   CP: Number,
   poblacio: String,
   provincia: String,
@@ -44,7 +43,7 @@ let establimentsSchema = Schema({
   nom: { type: String, unique: true },
   correu: { type: String, unique: true, lowercase: true },
   contrasenya: { type: String, select: false },
-  descripció: String,
+  descripcio: String,
   tipus: String,
   telf: String,
   web: String,
@@ -56,7 +55,12 @@ let establimentsSchema = Schema({
   rebosts: [rebostsSchema],
   ofertes: [ofertesSchema],
   avaluacions: [avaluacionsSchema],
+  coordenades:[Number]
 });
+
+establimentsSchema.index({
+  'coordenades':'2dsphere'
+})
 
 establimentsSchema.pre('save', function (next) {
   let establiment = this;
