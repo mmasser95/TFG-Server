@@ -30,7 +30,8 @@ router
   .delete('/users', isAuth, userCtrl.deleteUser)
   .get('/fav', isAuth, userCtrl.getPreferits)
   .post('/fav', isAuth, userCtrl.marcarPreferit)
-  .delete('/fav', isAuth, userCtrl.desmarcarPreferit);
+  .delete('/fav', isAuth, userCtrl.desmarcarPreferit)
+  .put('/users/contrasenya', isAuth, userCtrl.actualitzarContrasenya);
 
 //establiments
 router
@@ -50,7 +51,12 @@ router
     establimentsCtrl.updateEstabliment
   )
   .put('/establiments/direccio', isAuth, establimentsCtrl.updateDireccio)
-  .delete('/establiments', isAuth, establimentsCtrl.deleteEstabliment);
+  .delete('/establiments', isAuth, establimentsCtrl.deleteEstabliment)
+  .put(
+    '/establiments/contrasenya',
+    isAuth,
+    establimentsCtrl.actualitzarContrasenya
+  );
 
 //Search Establiments
 

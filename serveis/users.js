@@ -100,6 +100,23 @@ async function desmarcarPreferit(userId, establimentId) {
   return preferit;
 }
 
+async function actualitzarContrasenya(
+  userId,
+  contrasenyaAntiga,
+  contrasenyaNova
+) {
+  let query = Users.findOne({ _id: userId });
+  query.select('contrasenya _id');
+  let user = await query.exec();
+  if (!user) throw '404';
+  if (!bcrypt.compareSync(contrasenyaAntiga, user.contrasenya)) throw '401';
+  let userUpdated = await Users.findOneAndUpdate(
+    { _id: userId },
+    { contrasenya: contrasenyaNova }
+  );
+  return userUpdated;
+}
+
 module.exports = {
   getAllUsers,
   getUser,
@@ -111,4 +128,5 @@ module.exports = {
   getPreferit,
   marcarPreferit,
   desmarcarPreferit,
+  actualitzarContrasenya
 };

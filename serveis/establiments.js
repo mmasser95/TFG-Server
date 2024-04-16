@@ -92,11 +92,29 @@ async function searchEstabliments(coordenades, radi) {
         $maxDistance: radi * 1000,
       },
     },
-    'ofertes.active':true,
-    'ofertes.quantitatDisponible':{$gt:0}
+    'ofertes.active': true,
+    'ofertes.quantitatDisponible': { $gt: 0 },
   });
   if (!establiments) throw '404';
   return establiments;
+}
+
+async function actualitzarContrasenya(
+  establimentId,
+  contrasenyaAntiga,
+  contrasenyaNova
+) {
+  let query = Establiments.findOne({ _id: establimentId });
+  query.select('contrasenya _id');
+  let establiment = await query.exec();
+  if (!establiment) throw '404';
+  if (!bcrypt.compareSync(contrasenyaAntiga, establiment.contrasenya))
+    throw '401';
+  let establimentUpdated = await Establiments.findOneAndUpdate(
+    { _id: establimentId },
+    { contrasenya: contrasenyaNova }
+  );
+  return establimentUpdated;
 }
 
 module.exports = {
@@ -108,4 +126,5 @@ module.exports = {
   deleteEstabliment,
   updateDireccio,
   searchEstabliments,
+  actualitzarContrasenya,
 };

@@ -117,6 +117,30 @@ async function desmarcarPreferit(req, res) {
   }
 }
 
+async function actualitzarContrasenya(req, res) {
+  try {
+    let userId = res.locals.payload.sub;
+    let contrasenyaNova = req.body.contrasenya;
+    let contrasenyaAntiga = req.body.contrasenyaAntiga;
+    let userUpdated = await UserService.actualitzarContrasenya(
+      userId,
+      contrasenyaAntiga,
+      contrasenyaNova
+    );
+    return res.status(200).send({ userUpdated });
+  } catch (err) {
+    if (err == '401')
+      return res
+        .status(401)
+        .send({ message: 'La contrasenya introduida no es correcta' });
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'usuari" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${err}` });
+  }
+}
+
 module.exports = {
   postUser,
   getUsers,
@@ -127,4 +151,5 @@ module.exports = {
   getPreferits,
   marcarPreferit,
   desmarcarPreferit,
+  actualitzarContrasenya,
 };

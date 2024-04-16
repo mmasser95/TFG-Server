@@ -146,6 +146,30 @@ async function updateDireccio(req, res) {
   }
 }
 
+async function actualitzarContrasenya(req, res) {
+  try {
+    let establimentId = res.locals.payload.sub;
+    let contrasenyaNova = req.body.contrasenya;
+    let contrasenyaAntiga = req.body.contrasenyaAntiga;
+    let establimentUpdated = await EstablimentsService.actualitzarContrasenya(
+      establimentId,
+      contrasenyaAntiga,
+      contrasenyaNova
+    );
+    return res.status(200).send({ establimentUpdated });
+  } catch (err) {
+    if (err == '401')
+      return res
+        .status(401)
+        .send({ message: 'La contrasenya introduida no es correcta' });
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${err}` });
+  }
+}
+
 module.exports = {
   getAllEstabliments,
   getEstabliment,
@@ -155,4 +179,5 @@ module.exports = {
   login,
   updateDireccio,
   searchEstabliments,
+  actualitzarContrasenya,
 };
