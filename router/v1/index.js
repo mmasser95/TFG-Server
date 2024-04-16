@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middlewares/auth.js');
+const uploadManager = require('../../middlewares/files.js');
 const isAuth = auth.isAuth;
 
 const { schemaV, validate } = require('../../middlewares/validators.js');
@@ -39,9 +40,15 @@ router
     '/establiments',
     schemaV('registreEstabliment'),
     validate,
+    uploadManager.perfilUpload.single('img_perfil'),
     establimentsCtrl.createEstabliment
   )
-  .put('/establiments/:id', isAuth, establimentsCtrl.updateEstabliment)
+  .put(
+    '/establiments',
+    isAuth,
+    uploadManager.perfilUpload.single('img_perfil'),
+    establimentsCtrl.updateEstabliment
+  )
   .put('/establiments/direccio', isAuth, establimentsCtrl.updateDireccio)
   .delete('/establiments', isAuth, establimentsCtrl.deleteEstabliment);
 
@@ -125,7 +132,12 @@ router
 router
   .get('/ofertes', isAuth, ofertesCtrl.getAllOfertes)
   .get('/ofertes/:id', isAuth, ofertesCtrl.getOferta)
-  .post('/ofertes', isAuth, ofertesCtrl.createOferta)
+  .post(
+    '/ofertes',
+    isAuth,
+    uploadManager.ofertaUpload.single('img_oferta'),
+    ofertesCtrl.createOferta
+  )
   .put('/ofertes/:id', isAuth, ofertesCtrl.updateOferta)
   .delete('/ofertes/:id', isAuth, ofertesCtrl.deleteOferta);
 

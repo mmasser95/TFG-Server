@@ -1,4 +1,5 @@
 const EstablimentsService = require('../serveis/establiments');
+const uploadManager = require('../middlewares/files');
 
 async function getAllEstabliments(req, res) {
   try {
@@ -28,6 +29,7 @@ async function getEstabliment(req, res) {
 
 async function createEstabliment(req, res) {
   try {
+    if (req.file) req.body.url_imatge = req.file.path;
     const establimentSaved = await EstablimentsService.signInEstabliment(
       req.body
     );
@@ -41,6 +43,7 @@ async function createEstabliment(req, res) {
 
 async function updateEstabliment(req, res) {
   try {
+    if (req.file) req.body.url_imatge = req.file.path;
     let establimentId = res.locals.payload.sub;
     const establimentUpdated = await EstablimentsService.updateEstabliment(
       establimentId,
@@ -151,5 +154,5 @@ module.exports = {
   deleteEstabliment,
   login,
   updateDireccio,
-  searchEstabliments
+  searchEstabliments,
 };

@@ -1,4 +1,5 @@
 const OfertesService = require('../serveis/ofertes');
+const uploadManager = require('../middlewares/files');
 
 async function getAllOfertes(req, res) {
   try {
@@ -35,6 +36,7 @@ async function getOferta(req, res) {
 
 async function createOferta(req, res) {
   try {
+    if (req.file) req.body.url_imatge = req.file.path;
     const ofertaSaved = await OfertesService.createOferta(
       res.locals.payload.sub,
       req.body
@@ -49,6 +51,14 @@ async function createOferta(req, res) {
 
 async function updateOferta(req, res) {
   try {
+    if (req.file) {
+      req.body.url_imatge = req.file.path;
+      let oferta = await OfertesService.getOferta(
+        res.locals.payload.sub,
+        req.params.id
+      );
+      if (oferta.url_imatge) await uploadManager.deleteImage(oferta.url_imatge);
+    }
     let ofertaUpdated = await OfertesService.updateOferta(
       res.locals.payload.sub,
       req.params.id,
