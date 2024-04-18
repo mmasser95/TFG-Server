@@ -3,7 +3,7 @@ const Users = require('../models/user');
 
 async function getAllRebosts(userId, userType) {
   let model = userType == 'client' ? Users : Establiments;
-  let usuari = await model.findOne({ _id: userId });
+  let usuari = await model.findOne({ _id: userId }).select('rebosts._id rebosts.nom rebosts.descripcio');
   if (!usuari) throw '404';
   return usuari.rebosts;
 }
@@ -40,7 +40,7 @@ async function deleteRebost(userId, userType, rebostId) {
     { _id: userId },
     { $pull: { rebosts: { _id: rebostId } } }
   );
-  if(!deleted) throw'404'
+  if (!deleted) throw '404';
   return deleted;
 }
 

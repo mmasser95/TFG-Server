@@ -3,11 +3,19 @@ const Establiments = require('../models/establiments');
 
 async function getAllElements(userId, userType, rebostId) {
   let model = userType == 'client' ? Users : Establiments;
-  let usuari = await model.findOne({ _id: userId });
-  if (!usuari) throw '401';
-  let rebost = usuari.rebosts.id(rebostId);
-  if (!rebost) throw '402';
-  if (!rebost.elements) throw '404';
+  let user = await model
+    .findOne({ _id: userId, rebosts: { $elemMatch: { _id: rebostId } } })
+    .populate({
+      path: 'rebosts',
+      populate: {
+        path: 'elements',
+        populate: {
+          path: 'aliment',
+          model: 'Aliments',
+        },
+      },
+    });
+  let rebost = user.rebosts.id(rebostId);
   return rebost.elements;
 }
 
@@ -19,6 +27,7 @@ async function getElement(userId, userType, rebostId, elementId) {
   if (!rebost) throw '404';
   let element = rebost.elements.id(elementId);
   if (!element) throw '404';
+  await element.populate({ path: 'aliment', model: 'Aliment' });
   return element;
 }
 
@@ -44,7 +53,7 @@ async function putElement(userId, userType, rebostId, elementId, elementInfo) {
 
 async function deleteElement(userId, userType, rebostId, elementId) {
   let model = userType == 'client' ? Users : Establiments;
-  let deleted = await Model.findOneAndUpdate(
+  let deleted = await model.findOneAndUpdate(
     { _id: userId },
     {
       $pull: { 'rebosts.$[outer].elements': { _id: elementId } },

@@ -30,7 +30,7 @@ router
   .delete('/users', isAuth, userCtrl.deleteUser)
   .get('/fav', isAuth, userCtrl.getPreferits)
   .post('/fav', isAuth, userCtrl.marcarPreferit)
-  .delete('/fav', isAuth, userCtrl.desmarcarPreferit)
+  .delete('/fav/:establimentId', isAuth, userCtrl.desmarcarPreferit)
   .put('/users/contrasenya', isAuth, userCtrl.actualitzarContrasenya);
 
 //establiments
@@ -42,13 +42,27 @@ router
     schemaV('registreEstabliment'),
     validate,
     uploadManager.perfilUpload.single('img_perfil'),
+    uploadManager.fondoUpload.single('img_fondo'),
     establimentsCtrl.createEstabliment
   )
   .put(
     '/establiments',
     isAuth,
     uploadManager.perfilUpload.single('img_perfil'),
+    uploadManager.fondoUpload.single('img_fondo'),
     establimentsCtrl.updateEstabliment
+  )
+  .put(
+    '/establiments/img_perfil',
+    isAuth,
+    uploadManager.perfilUpload.single('img_perfil'),
+    establimentsCtrl.updateImatgePerfil
+  )
+  .put(
+    '/establiments/img_fondo',
+    isAuth,
+    uploadManager.fondoUpload.single('img_fondo'),
+    establimentsCtrl.updateImatgeFondo
   )
   .put('/establiments/direccio', isAuth, establimentsCtrl.updateDireccio)
   .delete('/establiments', isAuth, establimentsCtrl.deleteEstabliment)

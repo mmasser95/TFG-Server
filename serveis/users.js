@@ -70,7 +70,7 @@ async function deleteUser(id) {
 }
 
 async function getPreferits(userId) {
-  let user = await Users.findOne({ _id: userId });
+  let user = await Users.findOne({ _id: userId }).select('establiments_fav.establimentId');
   if (!user || !user.establiments_fav) throw '404';
   return user.establiments_fav;
 }

@@ -104,7 +104,7 @@ async function marcarPreferit(req, res) {
 async function desmarcarPreferit(req, res) {
   let userId = res.locals.payload.sub;
   try {
-    let establimentId = req.body.establimentId;
+    let establimentId = req.params.establimentId;
     let preferitDeleted = await UserService.desmarcarPreferit(
       userId,
       establimentId

@@ -4,13 +4,12 @@ const schemaV = (method) => {
   switch (method) {
     case 'login':
       return [
+        body('*').trim(),
         body('correu', 'Correu invàlid')
-          .trim()
           .toLowerCase()
           .normalizeEmail()
           .isEmail(),
         body('contrasenya', 'Contrasenya invàlida')
-          .trim()
           .exists()
           .isLength({ min: 8 }),
       ];

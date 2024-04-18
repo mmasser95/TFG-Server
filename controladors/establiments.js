@@ -29,7 +29,6 @@ async function getEstabliment(req, res) {
 
 async function createEstabliment(req, res) {
   try {
-    if (req.file) req.body.url_imatge = req.file.path;
     const establimentSaved = await EstablimentsService.signInEstabliment(
       req.body
     );
@@ -41,9 +40,48 @@ async function createEstabliment(req, res) {
   }
 }
 
+async function updateImatgePerfil(req, res) {
+  try {
+    const establimentId=res.locals.payload.sub
+    const url_imatge = req.file.path;
+    const establimentUpdated = await EstablimentsService.updateEstabliment(
+      establimentId,
+      { url_imatge }
+    );
+    return res.status(200).send({ establimentUpdated });
+  } catch (err) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
+async function updateImatgeFondo(req, res) {
+  try {
+    const establimentId=res.locals.payload.sub
+    const url_fondo = req.file.path;
+    const establimentUpdated = await EstablimentsService.updateEstabliment(
+      establimentId,
+      { url_fondo }
+    );
+    return res.status(200).send({ establimentUpdated });
+  } catch (err) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
 async function updateEstabliment(req, res) {
   try {
-    if (req.file) req.body.url_imatge = req.file.path;
     let establimentId = res.locals.payload.sub;
     const establimentUpdated = await EstablimentsService.updateEstabliment(
       establimentId,
@@ -180,4 +218,6 @@ module.exports = {
   updateDireccio,
   searchEstabliments,
   actualitzarContrasenya,
+  updateImatgePerfil,
+  updateImatgeFondo
 };

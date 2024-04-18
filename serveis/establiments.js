@@ -11,7 +11,9 @@ let esquemaEstabliment = [
   'tipus',
   'web',
   'url_imatge',
+  'url_fondo',
   'direccio',
+  'horari',
 ];
 let esquemaDireccio = ['carrer', 'numero', 'CP', 'poblacio', 'provincia'];
 
@@ -20,7 +22,9 @@ async function getAllEstabliments() {
 }
 
 async function getEstabliment(id) {
-  let establiment = await Establiments.findOne({ _id: id });
+  let establiment = await Establiments.findOne({ _id: id }).select(
+    '_id nom descripcio horari tipus telf web packs_salvats direccio coordenades ofertes avaluacions'
+  );
   if (!establiment) throw '404';
   return establiment;
 }
@@ -94,7 +98,9 @@ async function searchEstabliments(coordenades, radi) {
     },
     'ofertes.active': true,
     'ofertes.quantitatDisponible': { $gt: 0 },
-  });
+  }).select(
+    '_id nom descripcio horari tipus telf web packs_salvats coordenades ofertes avaluacions'
+  );
   if (!establiments) throw '404';
   return establiments;
 }
