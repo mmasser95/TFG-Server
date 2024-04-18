@@ -50,19 +50,24 @@ let establimentsSchema = Schema({
   data_creacio: { type: Date, select: false, default: Date.now() },
   data_modificacio: { type: Date, select: false },
   url_imatge: String,
-  url_fondo:String,
+  url_fondo: String,
   packs_salvats: { type: Number, default: 0 },
-  horari:String,
+  horari: [
+    {
+      inici: String,
+      final: String,
+    },
+  ],
   direccio: direccioSchema,
   rebosts: [rebostsSchema],
   ofertes: [ofertesSchema],
   avaluacions: [avaluacionsSchema],
-  coordenades:[Number]
+  coordenades: [Number],
 });
 
 establimentsSchema.index({
-  'coordenades':'2dsphere'
-})
+  coordenades: '2dsphere',
+});
 
 establimentsSchema.pre('save', function (next) {
   let establiment = this;
