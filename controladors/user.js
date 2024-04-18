@@ -88,6 +88,18 @@ async function getPreferits(req, res) {
   }
 }
 
+async function getMyPreferits(req,res){
+  let userId = res.locals.payload.sub;
+  try {
+    let preferits = await UserService.getMyPreferits(userId);
+    return res.status(200).send({ preferits });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'usuari" });
+    return res.status(500).send({ message: `Error ${err}` });
+  }
+}
+
 async function marcarPreferit(req, res) {
   let userId = res.locals.payload.sub;
   try {
@@ -149,6 +161,7 @@ module.exports = {
   verificarTokenUsuari,
   deleteUser,
   getPreferits,
+  getMyPreferits,
   marcarPreferit,
   desmarcarPreferit,
   actualitzarContrasenya,

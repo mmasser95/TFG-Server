@@ -9,13 +9,15 @@ function nomFitxerPersonalitzat(tipusImatge, nomUsuari, nomOriginal) {
 
 const perfilStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/perfil/'),
-  filename: (req, file, cb) =>
-    cb(null, nomFitxerPersonalitzat('perfil', req.body.nom, file.originalname)),
+  filename: (req, file, cb) =>{
+  console.log(req.body)
+    cb(null, nomFitxerPersonalitzat('perfil', req.body.nom, file.originalname))},
 });
 const fondoStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/fondo/'),
-  filename: (req, file, cb) =>
-    cb(null, nomFitxerPersonalitzat('fondo', req.body.nom, file.originalname)),
+  filename: (req, file, cb) =>{
+  console.log(req.body)
+    cb(null, nomFitxerPersonalitzat('fondo', req.body.nom, file.originalname))},
 });
 
 const ofertaStorage=multer.diskStorage({

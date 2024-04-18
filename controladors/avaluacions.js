@@ -3,7 +3,8 @@ const AvaluacionsService = require('../serveis/avaluacions');
 async function getAllAvaluacions(req, res) {
   try {
     let establimentId = req.params.establimentId;
-    let avaluacions = AvaluacionsService.getAllAvaluacions(establimentId);
+    let avaluacions = await AvaluacionsService.getAllAvaluacions(establimentId);
+    console.log('avaluacions :>> ', avaluacions);
     return res.status(200).send({ avaluacions });
   } catch (err) {
     if (err == '404')

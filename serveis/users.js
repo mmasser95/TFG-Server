@@ -70,17 +70,29 @@ async function deleteUser(id) {
 }
 
 async function getPreferits(userId) {
-  let user = await Users.findOne({ _id: userId }).select('establiments_fav.establimentId');
+  let user = await Users.findOne({ _id: userId }).select(
+    'establiments_fav.establimentId'
+  );
   if (!user || !user.establiments_fav) throw '404';
   return user.establiments_fav;
 }
 
-async function getPreferit(userId, establimentId) {
-  let preferits = await getPreferits(userId);
-  let preferit = await preferits.find((x) => x.establimentId === establimentId);
-  if (!preferit) return false;
-  return true;
+async function getMyPreferits(userId) {
+  let user = await Users.findOne({ _id: userId })
+    .populate({
+      path: 'establiments_fav',
+      populate: {
+        path: 'establimentId',
+        model: 'Establiments',
+      },
+    }).select('establiments_fav')
+    /*.select(
+      '_id nom descripcio horari tipus telf web packs_salvats coordenades ofertes avaluacions url_imatge url_fondo'
+    );*/
+    return user
 }
+
+
 
 async function marcarPreferit(userId, establimentId) {
   let preferit = await Users.findOneAndUpdate(
@@ -125,8 +137,8 @@ module.exports = {
   updateUser,
   deleteUser,
   getPreferits,
-  getPreferit,
+  getMyPreferits,
   marcarPreferit,
   desmarcarPreferit,
-  actualitzarContrasenya
+  actualitzarContrasenya,
 };

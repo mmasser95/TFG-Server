@@ -2,7 +2,8 @@ const Establiments = require('../models/establiments');
 const EstablimentsService = require('../serveis/establiments');
 
 async function getAllAvaluacions(establimentId) {
-  let establiment = await EstablimentsService.getEstabliment(establimentId);
+  let establiment = await Establiments.findOne({_id:establimentId})
+  
   if (!establiment.avaluacions) throw '404';
   return establiment.avaluacions;
 }

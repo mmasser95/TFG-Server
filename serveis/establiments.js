@@ -1,4 +1,6 @@
 const Establiments = require('../models/establiments');
+const mongoose=require('mongoose')
+const ObjectId=mongoose.Types.ObjectId
 const bcrypt = require('bcrypt-node');
 const Token = require('./token');
 
@@ -23,7 +25,7 @@ async function getAllEstabliments() {
 
 async function getEstabliment(id) {
   let establiment = await Establiments.findOne({ _id: id }).select(
-    '_id nom descripcio horari tipus telf web packs_salvats direccio coordenades ofertes avaluacions'
+    '_id nom descripcio horari tipus telf web packs_salvats direccio coordenades ofertes avaluacions url_imatge url_fondo'
   );
   if (!establiment) throw '404';
   return establiment;
@@ -99,7 +101,7 @@ async function searchEstabliments(coordenades, radi) {
     'ofertes.active': true,
     'ofertes.quantitatDisponible': { $gt: 0 },
   }).select(
-    '_id nom descripcio horari tipus telf web packs_salvats coordenades ofertes avaluacions'
+    '_id nom descripcio horari tipus telf web packs_salvats coordenades ofertes avaluacions url_imatge url_fondo'
   );
   if (!establiments) throw '404';
   return establiments;
@@ -123,6 +125,33 @@ async function actualitzarContrasenya(
   return establimentUpdated;
 }
 
+async function getEstadistiques(establimentId) {
+  console.log('establimentId :>> ', establimentId);
+  let estadistiques = await Establiments.aggregate([
+    {
+      $match: {
+        _id: new ObjectId(establimentId),
+      },
+    },
+    {
+      $unwind: '$avaluacions', // Desdobla el array 'avaluacions' para poder sumar las evaluaciones de calidad de cada elemento
+    },
+
+    {
+      $group: {
+        _id: '$_id', // Agrupa por el ID del establecimiento
+        sumaQualitat: {
+          $avg: '$avaluacions.qualitat', // Suma las evaluaciones de calidad
+        },
+        sumaQuantitat: {
+          $avg: '$avaluacions.quantitat', // Suma las evaluaciones de calidad
+        },
+      },
+    },
+  ]);
+  return estadistiques;
+}
+
 module.exports = {
   getAllEstabliments,
   getEstabliment,
@@ -133,4 +162,5 @@ module.exports = {
   updateDireccio,
   searchEstabliments,
   actualitzarContrasenya,
+  getEstadistiques,
 };

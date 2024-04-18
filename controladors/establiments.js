@@ -42,7 +42,7 @@ async function createEstabliment(req, res) {
 
 async function updateImatgePerfil(req, res) {
   try {
-    const establimentId=res.locals.payload.sub
+    const establimentId = res.locals.payload.sub;
     const url_imatge = req.file.path;
     const establimentUpdated = await EstablimentsService.updateEstabliment(
       establimentId,
@@ -62,7 +62,7 @@ async function updateImatgePerfil(req, res) {
 
 async function updateImatgeFondo(req, res) {
   try {
-    const establimentId=res.locals.payload.sub
+    const establimentId = res.locals.payload.sub;
     const url_fondo = req.file.path;
     const establimentUpdated = await EstablimentsService.updateEstabliment(
       establimentId,
@@ -208,6 +208,20 @@ async function actualitzarContrasenya(req, res) {
   }
 }
 
+async function getEstadistiques(req, res) {
+  let establimentId = req.params.id;
+  try {
+    let estadistiques = await EstablimentsService.getEstadistiques(establimentId);
+    return res.status(200).send({ estadistiques });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat l'establiment" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${err}` });
+  }
+}
+
 module.exports = {
   getAllEstabliments,
   getEstabliment,
@@ -219,5 +233,6 @@ module.exports = {
   searchEstabliments,
   actualitzarContrasenya,
   updateImatgePerfil,
-  updateImatgeFondo
+  updateImatgeFondo,
+  getEstadistiques,
 };

@@ -29,6 +29,7 @@ router
   .get('/profile', isAuth, userCtrl.getMyUser)
   .delete('/users', isAuth, userCtrl.deleteUser)
   .get('/fav', isAuth, userCtrl.getPreferits)
+  .get('/myfav', isAuth, userCtrl.getMyPreferits)
   .post('/fav', isAuth, userCtrl.marcarPreferit)
   .delete('/fav/:establimentId', isAuth, userCtrl.desmarcarPreferit)
   .put('/users/contrasenya', isAuth, userCtrl.actualitzarContrasenya);
@@ -70,7 +71,8 @@ router
     '/establiments/contrasenya',
     isAuth,
     establimentsCtrl.actualitzarContrasenya
-  );
+  )
+  .get('/estadistiques/:id',isAuth,establimentsCtrl.getEstadistiques);
 
 //Search Establiments
 
