@@ -24,7 +24,25 @@ async function getOferta(req, res) {
     );
     return res.status(200).send({ oferta });
   } catch (error) {
-    if (!oferta)
+    if (error=='404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap oferta disponible" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
+async function getOfertaUser(req,res){
+  try {
+    let oferta = await OfertesService.getOfertaUser(
+      req.params.establimentId,
+      req.params.id
+    );
+    return res.status(200).send({ oferta });
+  } catch (error) {
+    if (error=='404')
       return res
         .status(404)
         .send({ message: "No s'ha trobat cap oferta disponible" });
@@ -89,6 +107,7 @@ async function deleteOferta(req, res) {
 module.exports = {
   getAllOfertes,
   getOferta,
+  getOfertaUser,
   createOferta,
   updateOferta,
   deleteOferta,

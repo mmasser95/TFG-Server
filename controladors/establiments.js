@@ -50,13 +50,13 @@ async function updateImatgePerfil(req, res) {
     );
     return res.status(200).send({ establimentUpdated });
   } catch (err) {
-    if (error == '404')
+    if (EvalError == '404')
       return res
         .status(404)
         .send({ message: "No s'ha trobat cap establiment" });
     return res
       .status(500)
-      .send({ message: `Ha sorgit l'error següent ${error}` });
+      .send({ message: `Ha sorgit l'error següent ${err}` });
   }
 }
 
@@ -121,10 +121,15 @@ async function searchEstabliments(req, res) {
   try {
     let coordenades = [req.body.latitude, req.body.longitude];
     let radi = req.body.radi;
-    let establiments = await EstablimentsService.searchEstabliments(
+    /*let establiments = await EstablimentsService.searchEstabliments(
       coordenades,
       radi
     );
+    return res.status(200).send({ establiments });*/
+    let preuMin=0
+    let preuMax=99
+    let tipus_establiment=""
+    let establiments=await EstablimentsService.searchEstabliments2(coordenades,radi,preuMin,preuMax,tipus_establiment  )
     return res.status(200).send({ establiments });
   } catch (error) {
     if (error == '404')

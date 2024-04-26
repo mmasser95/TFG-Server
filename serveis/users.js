@@ -86,13 +86,9 @@ async function getMyPreferits(userId) {
         model: 'Establiments',
       },
     }).select('establiments_fav')
-    /*.select(
-      '_id nom descripcio horari tipus telf web packs_salvats coordenades ofertes avaluacions url_imatge url_fondo'
-    );*/
-    return user
+  if (!user) throw '404';
+  return user;
 }
-
-
 
 async function marcarPreferit(userId, establimentId) {
   let preferit = await Users.findOneAndUpdate(

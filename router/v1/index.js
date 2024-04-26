@@ -154,6 +154,7 @@ router
 router
   .get('/ofertes', isAuth, ofertesCtrl.getAllOfertes)
   .get('/ofertes/:id', isAuth, ofertesCtrl.getOferta)
+  .get('/establiments/:establimentId/oferta/:id',isAuth,ofertesCtrl.getOfertaUser)
   .post(
     '/ofertes',
     isAuth,

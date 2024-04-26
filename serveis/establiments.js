@@ -1,6 +1,6 @@
 const Establiments = require('../models/establiments');
-const mongoose=require('mongoose')
-const ObjectId=mongoose.Types.ObjectId
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 const bcrypt = require('bcrypt-node');
 const Token = require('./token');
 
@@ -107,6 +107,55 @@ async function searchEstabliments(coordenades, radi) {
   return establiments;
 }
 
+async function searchEstabliments2(
+  coordenades,
+  radi,
+  preuMin,
+  preuMax,
+  tipus_establiment
+) {
+  let pipeline = [];
+  pipeline.push({
+    $geoNear: {
+      near: {
+        type: 'Point',
+        coordinates: coordenades,
+      },
+      maxDistance: radi * 1000,
+      spherical: true,
+      distanceField: 'distance',
+    },
+  });
+
+  pipeline.push({
+    $match: {
+      'ofertes.active': true,
+      'ofertes.quantitatDisponible': { $gt: 0 },
+    },
+  });
+
+  pipeline.push({
+    $project: {
+      _id: 1,
+      nom: 1,
+      ofertes: 1,
+      descripcio: 1,
+      telf: 1,
+      horari: 1,
+      tipus: 1,
+      telf: 1,
+      web: 1,
+      packs_salvats: 1,
+      direccio: 1,
+      ofertes: 1,
+    },
+  });
+
+  let establiments = await Establiments.aggregate(pipeline);
+  if (!establiments) throw '404';
+  return establiments;
+}
+
 async function actualitzarContrasenya(
   establimentId,
   contrasenyaAntiga,
@@ -126,7 +175,6 @@ async function actualitzarContrasenya(
 }
 
 async function getEstadistiques(establimentId) {
-  console.log('establimentId :>> ', establimentId);
   let estadistiques = await Establiments.aggregate([
     {
       $match: {
@@ -136,7 +184,6 @@ async function getEstadistiques(establimentId) {
     {
       $unwind: '$avaluacions', // Desdobla el array 'avaluacions' para poder sumar las evaluaciones de calidad de cada elemento
     },
-
     {
       $group: {
         _id: '$_id', // Agrupa por el ID del establecimiento
@@ -149,6 +196,7 @@ async function getEstadistiques(establimentId) {
       },
     },
   ]);
+  if (!estadistiques) throw '404';
   return estadistiques;
 }
 
@@ -161,6 +209,7 @@ module.exports = {
   deleteEstabliment,
   updateDireccio,
   searchEstabliments,
+  searchEstabliments2,
   actualitzarContrasenya,
   getEstadistiques,
 };
