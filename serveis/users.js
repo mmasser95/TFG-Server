@@ -1,6 +1,8 @@
 const Users = require('../models/user');
 const bcrypt = require('bcrypt-node');
 const Token = require('./token');
+const mongoose=require('mongoose')
+const ObjectId = mongoose.Types.ObjectId;
 
 const { parse } = require('date-fns');
 
@@ -71,7 +73,7 @@ async function deleteUser(id) {
 
 async function getPreferits(userId) {
   let user = await Users.findOne({ _id: userId }).select(
-    'establiments_fav.establimentId'
+    'establiments_fav'
   );
   if (!user || !user.establiments_fav) throw '404';
   return user.establiments_fav;
@@ -79,13 +81,7 @@ async function getPreferits(userId) {
 
 async function getMyPreferits(userId) {
   let user = await Users.findOne({ _id: userId })
-    .populate({
-      path: 'establiments_fav',
-      populate: {
-        path: 'establimentId',
-        model: 'Establiments',
-      },
-    }).select('establiments_fav')
+    .populate('establiments_fav').select('establiments_fav')
   if (!user) throw '404';
   return user;
 }
@@ -93,7 +89,7 @@ async function getMyPreferits(userId) {
 async function marcarPreferit(userId, establimentId) {
   let preferit = await Users.findOneAndUpdate(
     { _id: userId },
-    { $push: { establiments_fav: { establimentId } } }
+    { $push: { establiments_fav: new ObjectId(establimentId)  } }
   );
   if (!preferit) throw '404';
   return preferit;
@@ -102,7 +98,7 @@ async function marcarPreferit(userId, establimentId) {
 async function desmarcarPreferit(userId, establimentId) {
   let preferit = await Users.findOneAndUpdate(
     { _id: userId },
-    { $pull: { establiments_fav: { establimentId } } }
+    { $pull: { establiments_fav: new ObjectId(establimentId)  } }
   );
   if (!preferit) throw '404';
   return preferit;

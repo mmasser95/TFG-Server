@@ -16,11 +16,8 @@ let userSchema = Schema({
   comandes_restants_descompte: Number,
   establiments_fav: [
     {
-      establimentId: {
         type: Schema.Types.ObjectId,
         ref: 'Establiments',
-        unique: true,
-      },
     },
   ],
   rebosts: [rebostsSchema],

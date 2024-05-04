@@ -21,7 +21,17 @@ async function getOferta(establimentId, ofertaId) {
   if (!oferta) throw '404';
   return oferta;
 }
-
+async function quantitatOferta(establimentId,ofertaId,quantitat){
+  let establiment=await Establiments.findOne({_id:establimentId})
+  let oferta=establiment.ofertes.id(ofertaId)
+  if(!oferta)throw '404'
+  return quantitat<=oferta.quantitatDisponible
+}
+async function restarQuantitatOferta(establimentId,ofertaId,quantitat){
+  await Establiments.findOneAndUpdate({_id:establimentId,'ofertes._id':ofertaId},{
+    $inc:{'ofertes.$.quantitatDisponible':-quantitat}
+  })
+}
 async function getOfertaUser(establimentId, ofertaId) {
   let establiment = await Establiments.findOne({
     _id: establimentId,
@@ -65,4 +75,6 @@ module.exports = {
   createOferta,
   updateOferta,
   deleteOferta,
+  quantitatOferta,
+  restarQuantitatOferta
 };

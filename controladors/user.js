@@ -49,19 +49,16 @@ async function getMyUser(req, res) {
   }
 }
 
-function verificarTokenUsuari(req, res) {
-  let post = req.body;
-  Token.decodeToken(post.token)
-    .then((result) => {
-      return res.status(200).send({
-        token: Token.createToken({ _id: result.sub }),
-        user_id: result.sub,
-        message: 'Token renovat',
-      });
-    })
-    .catch((err) => {
-      return res.status(err.status).send(err.message);
-    });
+function verificarToken(req, res) {
+  let userType = res.locals.payload.tipus;
+  let tipoToken = userType == 'establiment' ? true : false;
+  let userId = res.locals.payload.sub;
+  return res.status(200).send({
+    token: Token.createToken({ _id: userId }, tipoToken),
+    userId,
+    message: 'Token renovat',
+    userType
+  });
 }
 
 async function deleteUser(req, res) {
@@ -88,7 +85,7 @@ async function getPreferits(req, res) {
   }
 }
 
-async function getMyPreferits(req,res){
+async function getMyPreferits(req, res) {
   let userId = res.locals.payload.sub;
   try {
     let preferits = await UserService.getMyPreferits(userId);
@@ -158,7 +155,7 @@ module.exports = {
   getUsers,
   logIn,
   getMyUser,
-  verificarTokenUsuari,
+  verificarToken,
   deleteUser,
   getPreferits,
   getMyPreferits,

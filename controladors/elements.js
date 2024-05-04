@@ -2,7 +2,7 @@ const ElementsService = require('../serveis/elements');
 async function getAllElements(req, res) {
   try {
     let userId = res.locals.payload.sub;
-    console.log(userId)
+    console.log(userId);
     let userType = res.locals.payload.tipus;
     let rebostId = req.params.rebostId;
     let elements = await ElementsService.getAllElements(
@@ -53,6 +53,29 @@ async function createElement(req, res) {
       userType,
       rebostId,
       elementInfo
+    );
+    return res.status(201).send({ userSaved });
+  } catch (error) {
+    if (error == '404')
+      return res
+        .status(404)
+        .send({ message: "No s'ha trobat cap usuari o rebost" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
+}
+
+async function createElementScan(req, res) {
+  try {
+    let userId = res.locals.payload.sub;
+    let userType = res.locals.payload.tipus;
+    let rebostId = req.params.rebostId;
+    let userSaved = await ElementsService.createElementScan(
+      userId,
+      userType,
+      rebostId,
+      req.body.elements
     );
     return res.status(201).send({ userSaved });
   } catch (error) {
@@ -120,6 +143,7 @@ module.exports = {
   getAllElements,
   getElement,
   createElement,
+  createElementScan,
   updateElement,
   deleteElement,
 };

@@ -1,87 +1,89 @@
-const Comandes=require('../models/comandes.js');
+const ComandaService = require('../serveis/comandes');
 
-async function getAllComandes(req,res){
-    try {
-        let userId=res.locals.payload.sub;
-        const comandes = await Comandes.find({user:userId});
-        if (!comandes) return res.status(404).send({message:"No s'ha trobat cap comanda"});
-        return res.status(200).send({comandes});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
-}
-
-async function getComanda(req,res){
-    try {
-        const comandaId=req.params.comandaId;
-        let userId=res.locals.payload.sub;
-        const comanda=await Comandes.findOne({_id:comandaId,user:userId});
-        if (!comanda) return res.status(404).send({message:"No s'ha trobat cap comanda"});
-        return res.status(200).send({comanda});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function getAllComandes(req, res) {
+  try {
+    const userId = res.locals.payload.sub;
+    const comandes = await ComandaService.getAllComandesByUser(userId);
+    return res.status(200).send({ comandes });
+  } catch (error) {
+    if (error == '404')
+      return res.status(404).send({ message: "No s'ha trobat cap comanda" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-async function createComanda(req,res){
-    try{
-        var data=parse(req.body.data, 'dd/MM/yyyy', new Date());
-        
-    }catch(err){
-        return res.status(400).send({message: `Ha sorgit un error formatant la data`});
-    }
-    try {
-        let userId=res.locals.payload.sub;
-        const comanda=new Comandes({
-            user:userId,
-            oferta:req.body.oferta,
-            data,
-            pagat:req.body.pagat,
-        });
-        const comandaSaved = await comanda.save();
-        return res.status(201).send({comandaSaved});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function getComanda(req, res) {
+  try {
+    const comandaId = req.params.comandaId;
+    const userId = res.locals.payload.sub;
+    const comanda = await ComandaService.getComanda(comandaId, userId);
+    return res.status(200).send({ comanda });
+  } catch (error) {
+    if (error == '404')
+      return res.status(404).send({ message: "No s'ha trobat cap comanda" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-async function updateComanda(req,res){
-    try{
-        var data=parse(req.body.data, 'dd/MM/yyyy', new Date());
-        
-    }catch(err){
-        return res.status(400).send({message: `Ha sorgit un error formatant la data`});
-    }
-    try {
-        let userId=res.locals.payload.sub;
-        const comanda=await Comandes.findOne({_id:req.params.comandaId,user:userId});
-        if (!comanda) return res.status(404).send({message:"No s'ha trobat cap comanda"});
-        comanda.oferta=req.body.oferta;
-        comanda.total=req.body.total;
-        comanda.data=data;
-        comanda.pagat=req.body.pagat;
-        const comandaUpdated = await comanda.save();
-        return res.status(200).send({comandaUpdated});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function createComanda(req, res) {
+  try {
+    const userId = res.locals.payload.sub;
+    const comandaSaved = await ComandaService.createComanda(req.body, userId);
+    return res.status(201).send({ comandaSaved });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
 
-async function deleteComanda(req,res){
-    try {
-        let userId=res.locals.payload.sub;
-        const comanda=await Comandes.findOne({_id:req.params.comandaId,user:userId});
-        if (!comanda) return res.status(404).send({message:"No s'ha trobat cap comanda"});
-        const comandaDeleted = await comanda.remove();
-        return res.status(200).send({comandaDeleted});
-    } catch (error) {
-        return res.status(500).send({message:`Ha sorgit l'error següent ${error}`});
-    }
+async function updateComanda(req, res) {
+  try {
+    req.body.data = parse(req.body.data, 'dd/MM/yyyy', new Date());
+  } catch (err) {
+    return res
+      .status(400)
+      .send({ message: `Ha sorgit un error formatant la data` });
+  }
+  try {
+    const userId = res.locals.payload.sub;
+    const comandaId = req.params.comandaId;
+    const comandaUpdated = await ComandaService.updateComanda(
+      req.body,
+      comandaId,
+      userId
+    );
+    return res.status(200).send({ comandaUpdated });
+  } catch (error) {
+    if (error == '404')
+      return res.status(404).send({ message: "No s'ha trobat cap comanda" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
-module.exports={
-    getAllComandes,
-    getComanda,
-    createComanda,
-    updateComanda,
-    deleteComanda
+
+async function deleteComanda(req, res) {
+  try {
+    const comandaId=req.params.comandaId
+    const comandaDeleted = await ComandaService.deleteComanda(comandaId);
+    return res.status(200).send({ comandaDeleted });
+  } catch (error) {
+    if (error == '404')
+      return res.status(404).send({ message: "No s'ha trobat cap comanda" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent ${error}` });
+  }
 }
+module.exports = {
+  getAllComandes,
+  getComanda,
+  createComanda,
+  updateComanda,
+  deleteComanda,
+};

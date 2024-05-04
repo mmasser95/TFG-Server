@@ -38,7 +38,19 @@ async function createElement(userId, userType, rebostId, elementInfo) {
   let rebost = usuari.rebosts.id(rebostId);
   if (!rebost) throw '404';
   rebost.elements.push(elementInfo);
-  return usuari.save();
+  return await usuari.save();
+}
+
+async function createElementScan(userId,userType,rebostId,elementsInfo){
+  let model= userType == 'client' ? Users : Establiments;
+  let usuari = await model.findOne({ _id: userId });
+  if (!usuari) throw '404';
+  let rebost = usuari.rebosts.id(rebostId);
+  if (!rebost) throw '404';
+  for (const elementInfo of elementsInfo) {
+    rebost.elements.push(elementInfo);
+  }
+  return await usuari.save()
 }
 
 async function putElement(userId, userType, rebostId, elementId, elementInfo) {
@@ -69,4 +81,5 @@ module.exports = {
   createElement,
   putElement,
   deleteElement,
+  createElementScan
 };

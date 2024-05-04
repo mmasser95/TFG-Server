@@ -126,10 +126,25 @@ async function searchEstabliments(req, res) {
       radi
     );
     return res.status(200).send({ establiments });*/
-    let preuMin=0
-    let preuMax=99
-    let tipus_establiment=""
-    let establiments=await EstablimentsService.searchEstabliments2(coordenades,radi,preuMin,preuMax,tipus_establiment  )
+    let preuMin = 0;
+    if (req.body.preuMin) preumin = req.body.preuMin;
+    let preuMax = 9999;
+    if (req.body.preuMin) preumin = req.body.preuMin;
+    let quantitatMin = 0;
+    if (req.body.quantitatMin) quantitatMin = req.body.quantitatMin;
+    let qualitatMin = 0;
+    if (req.body.qualitatMin) qualitatMin = req.body.qualitatMin;
+
+    let tipus_establiment = '';
+    let establiments = await EstablimentsService.searchEstabliments2(
+      coordenades,
+      radi,
+      preuMin,
+      preuMax,
+      qualitatMin,
+      quantitatMin,
+      tipus_establiment
+    );
     return res.status(200).send({ establiments });
   } catch (error) {
     if (error == '404')
@@ -216,7 +231,9 @@ async function actualitzarContrasenya(req, res) {
 async function getEstadistiques(req, res) {
   let establimentId = req.params.id;
   try {
-    let estadistiques = await EstablimentsService.getEstadistiques(establimentId);
+    let estadistiques = await EstablimentsService.getEstadistiques(
+      establimentId
+    );
     return res.status(200).send({ estadistiques });
   } catch (err) {
     if (err == '404')

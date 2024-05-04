@@ -32,7 +32,8 @@ router
   .get('/myfav', isAuth, userCtrl.getMyPreferits)
   .post('/fav', isAuth, userCtrl.marcarPreferit)
   .delete('/fav/:establimentId', isAuth, userCtrl.desmarcarPreferit)
-  .put('/users/contrasenya', isAuth, userCtrl.actualitzarContrasenya);
+  .put('/users/contrasenya', isAuth, userCtrl.actualitzarContrasenya)
+  .get('/verificar', isAuth, userCtrl.verificarToken);
 
 //establiments
 router
@@ -72,7 +73,7 @@ router
     isAuth,
     establimentsCtrl.actualitzarContrasenya
   )
-  .get('/estadistiques/:id',isAuth,establimentsCtrl.getEstadistiques);
+  .get('/estadistiques/:id', isAuth, establimentsCtrl.getEstadistiques);
 
 //Search Establiments
 
@@ -81,33 +82,26 @@ router.post('/search', isAuth, establimentsCtrl.searchEstabliments);
 //avaluacions
 router
   .get(
-    '/establiments/:establimentId/avaluacions',
+    '/establiment/:establimentId/avaluacions',
     isAuth,
     avaluacionsCtrl.getAllAvaluacions
   )
+  .get('/comandes/:comandaId/avaluacions', isAuth, avaluacionsCtrl.getAvaluacio)
   .post(
-    '/establiments/:establimentId/avaluacions',
+    '/comandes/:comandaId/avaluacions',
     isAuth,
     avaluacionsCtrl.createAvaluacio
   )
   .put(
-    '/establiments/:establimentId/avaluacions/:avaluacioId',
+    '/comandes/:comandaId/avaluacions/:avaluacioId',
     isAuth,
     avaluacionsCtrl.updateAvaluacio
   )
   .delete(
-    '/establiments/:establimentId/avaluacions/:avaluacioId',
+    '/comandes/:comandaId/avaluacions/:avaluacioId',
     isAuth,
     avaluacionsCtrl.deleteAvaluacio
   );
-
-//direccions
-/*router
-.get()
-.get()
-.post()
-.put()
-.delete();*/
 
 //Google
 //router.get('/login/google', passport.authenticate(googleStrategy));
@@ -121,6 +115,7 @@ router
     elementsCtrl.getElement
   )
   .post('/rebosts/:rebostId/elements', isAuth, elementsCtrl.createElement)
+  .post('/rebosts/:rebostId/elements/scan',isAuth,elementsCtrl.createElementScan)
   .put(
     '/rebosts/:rebostId/elements/:elementId',
     isAuth,
@@ -139,6 +134,7 @@ router
   .get('/aliments/tipus/:tipus', alimentsCtrl.getAllAlimentsByTipus)
   .get('/aliments/:id', alimentsCtrl.getAliment)
   .post('/aliments', isAuth, alimentsCtrl.createAliment)
+  .post('/aliments/noms',isAuth,alimentsCtrl.getAlimentsByNoms)
   .put('/aliments/:id', isAuth, alimentsCtrl.updateAliment)
   .delete('/aliments/:id', isAuth, alimentsCtrl.deleteAliment);
 
@@ -154,7 +150,11 @@ router
 router
   .get('/ofertes', isAuth, ofertesCtrl.getAllOfertes)
   .get('/ofertes/:id', isAuth, ofertesCtrl.getOferta)
-  .get('/establiments/:establimentId/oferta/:id',isAuth,ofertesCtrl.getOfertaUser)
+  .get(
+    '/establiments/:establimentId/oferta/:id',
+    isAuth,
+    ofertesCtrl.getOfertaUser
+  )
   .post(
     '/ofertes',
     isAuth,

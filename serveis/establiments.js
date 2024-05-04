@@ -1,4 +1,5 @@
 const Establiments = require('../models/establiments');
+const Comandes = require('../models/comandes');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const bcrypt = require('bcrypt-node');
@@ -112,6 +113,8 @@ async function searchEstabliments2(
   radi,
   preuMin,
   preuMax,
+  qualitatMin,
+  quantitatMin,
   tipus_establiment
 ) {
   let pipeline = [];
@@ -126,14 +129,41 @@ async function searchEstabliments2(
       distanceField: 'distance',
     },
   });
-
+  pipeline.push({
+    $lookup: {
+      from: 'comandes',
+      localField: '_id',
+      foreignField: 'establimentId',
+      as: 'comandes',
+    },
+  });
+  pipeline.push({
+    $addFields: {
+      quantitatMitjana: { $avg: '$comandes.avaluacio.quantitat' },
+      qualitatMitjana: { $avg: '$comandes.avaluacio.qualitat' },
+    },
+  });
   pipeline.push({
     $match: {
       'ofertes.active': true,
       'ofertes.quantitatDisponible': { $gt: 0 },
+      'ofertes.preu': { $gte: preuMin, $lte: preuMax },
     },
   });
-
+  if (tipus_establiment != '')
+    pipeline.push({
+      $match: {
+        tipus: tipus_establiment,
+      },
+    });
+  if (quantitatMin > 0 || qualitatMin > 0) {
+    pipeline.push({
+      $match: {
+        quantitatMitjana: { $gte: quantitatMin },
+        qualitatMitjana: { $gte: qualitatMin },
+      },
+    });
+  }
   pipeline.push({
     $project: {
       _id: 1,
@@ -148,6 +178,9 @@ async function searchEstabliments2(
       packs_salvats: 1,
       direccio: 1,
       ofertes: 1,
+      coordenades: 1,
+      quantitatMitjana: 1,
+      qualitatMitjana: 1,
     },
   });
 
@@ -174,7 +207,7 @@ async function actualitzarContrasenya(
   return establimentUpdated;
 }
 
-async function getEstadistiques(establimentId) {
+async function getEstadistiques2(establimentId) {
   let estadistiques = await Establiments.aggregate([
     {
       $match: {
@@ -198,6 +231,29 @@ async function getEstadistiques(establimentId) {
   ]);
   if (!estadistiques) throw '404';
   return estadistiques;
+}
+
+async function getEstadistiques(establimentId) {
+  let estadistiques = await Comandes.aggregate([
+    {
+      $match: {
+        establimentId: new ObjectId(establimentId),
+      },
+    },
+    {
+      $group: {
+        _id: '$establimentId',
+        qualitat: {
+          $avg: '$avaluacio.qualitat',
+        },
+        quantitat: {
+          $avg: '$avaluacio.quantitat',
+        },
+      },
+    },
+  ]);
+  if (!estadistiques) throw '404';
+  return estadistiques[0];
 }
 
 module.exports = {

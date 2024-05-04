@@ -16,8 +16,16 @@ async function getAliment(id) {
 
 async function getAlimentByTipus(tipus) {
   let aliments = await Aliments.find({ tipus });
-  if(!aliments)throw'404'
-  return aliments
+  if (!aliments) throw '404';
+  return aliments;
+}
+
+async function getAlimentsByNoms(noms) {
+  let aliments = await Aliments.find({
+    nom: { $in: noms },
+  });
+  if (!aliments) throw '404';
+  return aliments;
 }
 
 async function getTipus() {
@@ -56,6 +64,7 @@ module.exports = {
   getAllAliments,
   getAliment,
   getAlimentByTipus,
+  getAlimentsByNoms,
   getTipus,
   createAliment,
   updateAliment,
