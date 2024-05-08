@@ -3,9 +3,7 @@ const Establiments = require('../models/establiments');
 
 let esquemaOferta = [
   'nom',
-  'preu',
-  'descripcio',
-  'quantitatDisponible',
+  'preu','descripcio','quantitatDisponible',
   'active',
   'url_imatge',
   'categoria',

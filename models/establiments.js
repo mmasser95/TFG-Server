@@ -63,6 +63,7 @@ let establimentsSchema = Schema({
   ofertes: [ofertesSchema],
   avaluacions: [avaluacionsSchema],
   coordenades: [Number],
+  deviceTokens: [String],
 });
 
 establimentsSchema.index({

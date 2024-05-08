@@ -127,9 +127,9 @@ async function searchEstabliments(req, res) {
     );
     return res.status(200).send({ establiments });*/
     let preuMin = 0;
-    if (req.body.preuMin) preumin = req.body.preuMin;
+    if (req.body.preuMin) preuMin = req.body.preuMin;
     let preuMax = 9999;
-    if (req.body.preuMin) preumin = req.body.preuMin;
+    if (req.body.preuMin) preuMax = req.body.preuMax;
     let quantitatMin = 0;
     if (req.body.quantitatMin) quantitatMin = req.body.quantitatMin;
     let qualitatMin = 0;

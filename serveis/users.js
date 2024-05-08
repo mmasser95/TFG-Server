@@ -89,7 +89,7 @@ async function getMyPreferits(userId) {
 async function marcarPreferit(userId, establimentId) {
   let preferit = await Users.findOneAndUpdate(
     { _id: userId },
-    { $push: { establiments_fav: new ObjectId(establimentId)  } }
+    { $addToSet: { establiments_fav: new ObjectId(establimentId)  } }
   );
   if (!preferit) throw '404';
   return preferit;

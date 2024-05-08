@@ -16,11 +16,12 @@ let userSchema = Schema({
   comandes_restants_descompte: Number,
   establiments_fav: [
     {
-        type: Schema.Types.ObjectId,
-        ref: 'Establiments',
+      type: Schema.Types.ObjectId,
+      ref: 'Establiments',
     },
   ],
   rebosts: [rebostsSchema],
+  deviceTokens: [String],
 });
 
 userSchema.pre('save', function (next) {

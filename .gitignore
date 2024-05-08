@@ -131,3 +131,5 @@ dist
 
 # Uploads directory
 uploads
+
+firebase.*.json

@@ -14,6 +14,7 @@ const elementsCtrl = require('../../controladors/elements.js');
 const ofertesCtrl = require('../../controladors/ofertes.js');
 const comandesCtrl = require('../../controladors/comandes.js');
 const avaluacionsCtrl = require('../../controladors/avaluacions.js');
+const firebaseCtrl = require('../../controladors/firebase.js');
 
 //users
 router
@@ -115,7 +116,11 @@ router
     elementsCtrl.getElement
   )
   .post('/rebosts/:rebostId/elements', isAuth, elementsCtrl.createElement)
-  .post('/rebosts/:rebostId/elements/scan',isAuth,elementsCtrl.createElementScan)
+  .post(
+    '/rebosts/:rebostId/elements/scan',
+    isAuth,
+    elementsCtrl.createElementScan
+  )
   .put(
     '/rebosts/:rebostId/elements/:elementId',
     isAuth,
@@ -134,7 +139,7 @@ router
   .get('/aliments/tipus/:tipus', alimentsCtrl.getAllAlimentsByTipus)
   .get('/aliments/:id', alimentsCtrl.getAliment)
   .post('/aliments', isAuth, alimentsCtrl.createAliment)
-  .post('/aliments/noms',isAuth,alimentsCtrl.getAlimentsByNoms)
+  .post('/aliments/noms', isAuth, alimentsCtrl.getAlimentsByNoms)
   .put('/aliments/:id', isAuth, alimentsCtrl.updateAliment)
   .delete('/aliments/:id', isAuth, alimentsCtrl.deleteAliment);
 
@@ -172,9 +177,11 @@ router
   .put('/comandes/:comandaId', isAuth, comandesCtrl.updateComanda)
   .delete('/comandes/:comandaId', isAuth, comandesCtrl.deleteComanda);
 
-/*
-
-router.get().get().post().put().delete();
-router.get().get().post().put().delete();*/
+//FCM
+router
+  .get('/fcm', isAuth, firebaseCtrl.testFCM)
+  .post('/fcm', isAuth, firebaseCtrl.addDeleteTokenOfDevice)
+  .post('/google',firebaseCtrl.googleLogin)
+/*router.get().get().post().put().delete();*/
 
 module.exports = router;
