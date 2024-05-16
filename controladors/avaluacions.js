@@ -103,10 +103,27 @@ async function deleteAvaluacio(req, res) {
   }
 }
 
+async function getUltims5Comentaris(req, res) {
+  try {
+    let establimentId = req.params.establimentId;
+    let avaluacions = await AvaluacionsService.getUltims5Comentaris(
+      establimentId
+    );
+    return res.status(200).send({ avaluacions });
+  } catch (err) {
+    if (err == '404')
+      return res.status(404).send({ message: "No s'ha trobat cap comentari" });
+    return res
+      .status(500)
+      .send({ message: `Ha sorgit l'error següent: ${err}` });
+  }
+}
+
 module.exports = {
   getAllAvaluacions,
   getAvaluacio,
   createAvaluacio,
   updateAvaluacio,
   deleteAvaluacio,
+  getUltims5Comentaris,
 };

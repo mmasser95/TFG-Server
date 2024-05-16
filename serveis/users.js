@@ -79,6 +79,7 @@ async function getPreferits(userId) {
   return user.establiments_fav;
 }
 
+
 async function getMyPreferits(userId) {
   let user = await Users.findOne({ _id: userId })
     .populate('establiments_fav').select('establiments_fav')

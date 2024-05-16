@@ -8,11 +8,17 @@ let avaluacionsSchema = Schema({
   data_creacio: { type: Date, default: Date.now(), select: false },
   data_modificacio: { type: Date, select: false },
 });
+let ofertesSchema = Schema({
+  nom: String,
+  preu: Number,
+  descripcio: String,
+  categoria: String,
+});
 
 let comandesSchema = Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User' },
   establimentId: { type: Schema.Types.ObjectId, ref: 'Establiments' },
-  ofertaId: { type: Schema.Types.ObjectId, ref: 'Establiments.ofertes' },
+  oferta: ofertesSchema,
   quantitat: Number,
   total: Number,
   data: { type: Date, default: Date.now },

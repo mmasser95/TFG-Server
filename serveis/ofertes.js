@@ -26,9 +26,10 @@ async function quantitatOferta(establimentId,ofertaId,quantitat){
   return quantitat<=oferta.quantitatDisponible
 }
 async function restarQuantitatOferta(establimentId,ofertaId,quantitat){
-  await Establiments.findOneAndUpdate({_id:establimentId,'ofertes._id':ofertaId},{
+  let establimentUpdated=await Establiments.findOneAndUpdate({_id:establimentId,'ofertes._id':ofertaId},{
     $inc:{'ofertes.$.quantitatDisponible':-quantitat}
   })
+  if(!establimentUpdated) throw '404'
 }
 async function getOfertaUser(establimentId, ofertaId) {
   let establiment = await Establiments.findOne({

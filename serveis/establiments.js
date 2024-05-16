@@ -52,7 +52,9 @@ async function loginEstabliment(correu, contrasenya) {
 async function signInEstabliment(establimentInfo) {
   let myInfo = {};
   for (const key of esquemaEstabliment) {
-    myInfo[key] = establimentInfo[key];
+    if (key == 'horari' || key == 'direccio')
+      myInfo[key] = JSON.parse(establimentInfo[key]);
+    else myInfo[key] = establimentInfo[key];
   }
   /*for (const key of esquemaDireccio) {
     myInfo['direccio'][key] = establimentInfo['direccio'][key];
@@ -181,6 +183,9 @@ async function searchEstabliments2(
       coordenades: 1,
       quantitatMitjana: 1,
       qualitatMitjana: 1,
+      url_imatge: 1,
+      url_fondo: 1,
+      distance: 1,
     },
   });
 

@@ -14,9 +14,13 @@ async function sendMessageToUser(userId, userType, title, body) {
   const model = userType == 'client' ? Users : Establiments;
   const usuari = await model.findOne({ _id: userId }).select('deviceTokens');
   if (!usuari || !usuari.deviceTokens) throw '404';
-  usuari.deviceTokens.forEach((token) =>
-    admin.messaging().send({ notification: { title, body }, token })
-  );
+  usuari.deviceTokens.forEach((token) => {
+    try {
+      admin.messaging().send({ notification: { title, body }, token });
+    } catch (err) {
+      console.log(err, ' amb el token ', token);
+    }
+  });
 
   return usuari;
 }

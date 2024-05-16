@@ -30,8 +30,8 @@ function decodeToken(token) {
       resolve(payload);
     } catch (err) {
       reject({
-        status: 500,
-        message: 'Token invalid',
+        status: 401,
+        message: 'Token invalid, torna a iniciar sessió',
       });
     }
   });

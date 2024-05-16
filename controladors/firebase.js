@@ -27,13 +27,13 @@ async function testFCM(req, res) {
   try {
     let userId = res.locals.payload.sub;
     let userType = res.locals.payload.tipus;
-    let usuari = await FirebaseService.sendMessageToUser(
+    /*let usuari = await FirebaseService.sendMessageToUser(
       userId,
       userType,
       'Prova',
       'PROOOOOOOOOOOOOOVAA'
-    );
-    return res.status(200).send({ message: 'funciona', usuari });
+    );*/
+    return res.status(200).send({ message: 'funciona' });
   } catch (err) {
     if (err == '404')
       return res.status(404).send({ message: "No s'ha trobat l'usuari" });

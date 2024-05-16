@@ -51,6 +51,7 @@ async function getMyUser(req, res) {
 
 function verificarToken(req, res) {
   let userType = res.locals.payload.tipus;
+  console.log(req.headers)
   let tipoToken = userType == 'establiment' ? true : false;
   let userId = res.locals.payload.sub;
   return res.status(200).send({

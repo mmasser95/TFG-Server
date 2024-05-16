@@ -18,10 +18,19 @@ async function getAllAvaluacions(establimentId) {
   return avaluacions;
 }
 
-async function getAvaluacio(comandaId,userId) {
+async function getUltims5Comentaris(establimentId){
+  let avaluacions=await Comandes.find({
+    establimentId,
+  }).sort(['data',-1]).limit(5).select('avaluacio');
+  if(!avaluacions)
+    throw '404'
+  return avaluacions
+}
+
+async function getAvaluacio(comandaId) {
+  
   let avaluacio=await Comandes.findOne({
-    _id:comandaId,
-    userId
+    _id:comandaId
   }).select('avaluacio')
   if(!avaluacio) throw'404'
   return avaluacio
@@ -38,6 +47,7 @@ async function createAvaluacio2(establimentId, userId, avaluacioInfo) {
 }
 
 async function createAvaluacio(comandaId, userId, avaluacioInfo) {
+  console.log("avaluacioInfo>>",avaluacioInfo)
   let comanda = await Comandes.findOneAndUpdate(
     {
       _id: comandaId,
@@ -45,9 +55,9 @@ async function createAvaluacio(comandaId, userId, avaluacioInfo) {
     },
     {
       $set: {
-        avaluacio: avaluacioInfo,
+        'avaluacio': avaluacioInfo,
       },
-    }
+    },{new:true}
   );
   if (!comanda) throw '404';
   return comanda;
@@ -108,4 +118,5 @@ module.exports = {
   createAvaluacio,
   updateAvaluacio,
   deleteAvaluacio,
+  getUltims5Comentaris,
 };

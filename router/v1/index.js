@@ -15,6 +15,7 @@ const ofertesCtrl = require('../../controladors/ofertes.js');
 const comandesCtrl = require('../../controladors/comandes.js');
 const avaluacionsCtrl = require('../../controladors/avaluacions.js');
 const firebaseCtrl = require('../../controladors/firebase.js');
+const perfilCtrl = require('../../controladors/perfil.js');
 
 //users
 router
@@ -88,6 +89,7 @@ router
     avaluacionsCtrl.getAllAvaluacions
   )
   .get('/comandes/:comandaId/avaluacions', isAuth, avaluacionsCtrl.getAvaluacio)
+  
   .post(
     '/comandes/:comandaId/avaluacions',
     isAuth,
@@ -173,15 +175,26 @@ router
 router
   .get('/comandes', isAuth, comandesCtrl.getAllComandes)
   .get('/comandes/:comandaId', isAuth, comandesCtrl.getComanda)
-  .post('/comandes', isAuth, comandesCtrl.createComanda)
-  .put('/comandes/:comandaId', isAuth, comandesCtrl.updateComanda)
-  .delete('/comandes/:comandaId', isAuth, comandesCtrl.deleteComanda);
+  .post('/comandes', isAuth,schemaV('newComanda'),
+  validate, comandesCtrl.createComanda)
+  //.put('/comandes/:comandaId', isAuth, comandesCtrl.updateComanda)
+  //.delete('/comandes/:comandaId', isAuth, comandesCtrl.deleteComanda);
 
 //FCM
 router
   .get('/fcm', isAuth, firebaseCtrl.testFCM)
   .post('/fcm', isAuth, firebaseCtrl.addDeleteTokenOfDevice)
-  .post('/google',firebaseCtrl.googleLogin)
+  .post('/google', firebaseCtrl.googleLogin);
+
+router
+  .get('/perfil', isAuth, perfilCtrl.getPerfil)
+  .put('/perfil', isAuth, perfilCtrl.updatePerfil)
+  .post(
+    '/correu/:correu',
+    perfilCtrl.existeixUsuari,
+    perfilCtrl.existeixEstabliment
+  ).post('/contrasenya',isAuth,perfilCtrl.canviarContrasenya);
+
 /*router.get().get().post().put().delete();*/
 
 module.exports = router;
