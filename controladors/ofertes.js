@@ -55,7 +55,6 @@ async function getOfertaUser(req,res){
 async function createOferta(req, res) {
   try {
     if (req.file) req.body.url_imatge = req.file.path;
-    console.log(req.file.path)
     const ofertaSaved = await OfertesService.createOferta(
       res.locals.payload.sub,
       req.body
