@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-node');
-const user = require('./user');
+const User = require('./user');
+const Comandes=require('./comandes')
 const Schema = mongoose.Schema;
 
 const rebostsSchema = require('./rebosts');
@@ -93,6 +94,20 @@ establimentsSchema.pre('update', function (next) {
       next();
     });
   });
+});
+
+establimentsSchema.post('findOneAndDelete', async (establiment) => {
+  try {
+    let users = await Users.updateMany(
+      { establiments_fav: establiment._id },
+      { $pull: { establiments_fav: establiment._id } }
+    );
+    console.log("Establiment borrat de totes els establiments favorits dels usuaris")
+    let comandes=await Comandes.deleteMany({establimentId:establiment._id})
+    console.log("Totes les comandes de l'establiment han estat eliminades")
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = mongoose.model('Establiments', establimentsSchema);

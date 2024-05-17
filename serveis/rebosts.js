@@ -44,10 +44,35 @@ async function deleteRebost(userId, userType, rebostId) {
   return deleted;
 }
 
+async function getAmbAlgunElementCaducat(model){
+  try{
+    let users=await model.aggregate([
+      // Desenrollar el arreglo 'rebosts' para poder acceder a los elementos individuales
+      { $unwind: "$rebosts" },
+      // Filtrar los elementos caducados
+      { $match: { "rebosts.elements.data_caducitat": { $lt: new Date() } } },
+      // Proyectar solo el campo 'nombre' del usuario
+      { $project: { _id: 1} }
+    ])
+    if(!users) return []
+    return users.map(el=>el._id)
+  }catch(err){
+    console.log(err)
+  }
+  
+}
+
+async function getAllUsuarisAmbAlgunElementCaducat(){
+  let clients=await getAmbAlgunElementCaducat(Users)
+  let establiments=await getAmbAlgunElementCaducat(Establiments)
+  return [clients,establiments]
+}
+
 module.exports = {
   getAllRebosts,
   getRebost,
   createRebost,
   updateRebost,
   deleteRebost,
+  getAllUsuarisAmbAlgunElementCaducat
 };

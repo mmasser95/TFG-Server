@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-node');
 const rebostsSchema = require('./rebosts');
 const Schema = mongoose.Schema;
-
+const Comandes=require('./comandes')
 let userSchema = Schema({
   nom: String,
   cognoms: String,
@@ -49,4 +49,12 @@ userSchema.pre('update', function (next) {
   });
 });
 
+userSchema.post('findOneAndDelete',async (usuari)=>{
+  try{
+    let comandes=await Comandes.deleteMany({userId:usuari._id})
+    console.log("Comandes eliminades")
+  }catch(err){
+    console.log("User delete error:",err)
+  }
+})
 module.exports = mongoose.model('User', userSchema);

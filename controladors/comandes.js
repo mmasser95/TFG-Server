@@ -1,4 +1,5 @@
 const ComandaService = require('../serveis/comandes');
+const FirebaseService=require('../serveis/firebase')
 
 async function getAllComandes(req, res) {
   try {
@@ -47,6 +48,7 @@ async function createComanda(req, res) {
         .status(401)
         .send({ message: `No estas autoritzat per a fer aquesta acció` });
     const comandaSaved = await ComandaService.createComanda(req.body, userId);
+    FirebaseService.sendMessageToUser(req.body.establimentId,"establiment","Nova comanda", "Un usuari ha fet una nova comanda")
     return res.status(201).send({ comandaSaved });
   } catch (error) {
     if(error=="404")

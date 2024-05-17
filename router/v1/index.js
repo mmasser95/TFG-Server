@@ -168,7 +168,7 @@ router
     uploadManager.ofertaUpload.single('img_oferta'),
     ofertesCtrl.createOferta
   )
-  .put('/ofertes/:id', isAuth, ofertesCtrl.updateOferta)
+  .put('/ofertes/:id', isAuth,uploadManager.ofertaUpload.single('img_oferta'), ofertesCtrl.updateOferta)
   .delete('/ofertes/:id', isAuth, ofertesCtrl.deleteOferta);
 
 //comandes
@@ -189,7 +189,7 @@ router
 router
   .get('/perfil', isAuth, perfilCtrl.getPerfil)
   .put('/perfil', isAuth, perfilCtrl.updatePerfil)
-  .post(
+  .get(
     '/correu/:correu',
     perfilCtrl.existeixUsuari,
     perfilCtrl.existeixEstabliment

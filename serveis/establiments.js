@@ -1,4 +1,5 @@
 const Establiments = require('../models/establiments');
+const Users = require('../models/user');
 const Comandes = require('../models/comandes');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -56,9 +57,6 @@ async function signInEstabliment(establimentInfo) {
       myInfo[key] = JSON.parse(establimentInfo[key]);
     else myInfo[key] = establimentInfo[key];
   }
-  /*for (const key of esquemaDireccio) {
-    myInfo['direccio'][key] = establimentInfo['direccio'][key];
-  }*/
   myInfo['coordenades'] = [establimentInfo.latitude, establimentInfo.longitude];
   let establiment = new Establiments({ ...myInfo });
   return await establiment.save();
@@ -71,10 +69,6 @@ async function updateEstabliment(id, establimentInfo) {
       if (establimentInfo[key] != '') establiment[key] = establimentInfo[key];
     }
   }
-  /*for (const key of esquemaDireccio) {
-    if (establimentInfo['key'] != '')
-      establiment['direccio'][key] = establimentInfo['direccio'][key];
-  }*/
   return await establiment.save();
 }
 
@@ -109,7 +103,15 @@ async function searchEstabliments(coordenades, radi) {
   if (!establiments) throw '404';
   return establiments;
 }
-
+async function getUsuarisQueTenenEstablimentPreferit(establimentId) {
+  console.log(establimentId)
+  let users = await Users.aggregate([
+    { $unwind: '$establiments_fav' },
+    { $match: { establiments_fav: new ObjectId(establimentId) } },
+    { $project: { _id: 1 } },
+  ]);
+  return users;
+}
 async function searchEstabliments2(
   coordenades,
   radi,
@@ -273,4 +275,5 @@ module.exports = {
   searchEstabliments2,
   actualitzarContrasenya,
   getEstadistiques,
+  getUsuarisQueTenenEstablimentPreferit,
 };

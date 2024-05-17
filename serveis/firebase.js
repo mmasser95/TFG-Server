@@ -13,12 +13,14 @@ admin.initializeApp({
 async function sendMessageToUser(userId, userType, title, body) {
   const model = userType == 'client' ? Users : Establiments;
   const usuari = await model.findOne({ _id: userId }).select('deviceTokens');
-  if (!usuari || !usuari.deviceTokens) throw '404';
-  usuari.deviceTokens.forEach((token) => {
+  if (!usuari || !usuari.deviceTokens) return ;
+  usuari.deviceTokens.forEach(async (token) => {
+    console.log("token",token)
     try {
-      admin.messaging().send({ notification: { title, body }, token });
+      await admin.messaging().send({ notification: { title, body }, token });
     } catch (err) {
       console.log(err, ' amb el token ', token);
+      await deleteTokenOfDevice(userId,userType,token)
     }
   });
 

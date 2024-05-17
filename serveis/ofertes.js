@@ -1,9 +1,12 @@
 const EstablimentsService = require('./establiments');
 const Establiments = require('../models/establiments');
+const FirebaseService = require('./firebase');
 
 let esquemaOferta = [
   'nom',
-  'preu','descripcio','quantitatDisponible',
+  'preu',
+  'descripcio',
+  'quantitatDisponible',
   'active',
   'url_imatge',
   'categoria',
@@ -19,17 +22,20 @@ async function getOferta(establimentId, ofertaId) {
   if (!oferta) throw '404';
   return oferta;
 }
-async function quantitatOferta(establimentId,ofertaId,quantitat){
-  let establiment=await Establiments.findOne({_id:establimentId})
-  let oferta=establiment.ofertes.id(ofertaId)
-  if(!oferta)throw '404'
-  return quantitat<=oferta.quantitatDisponible
+async function quantitatOferta(establimentId, ofertaId, quantitat) {
+  let establiment = await Establiments.findOne({ _id: establimentId });
+  let oferta = establiment.ofertes.id(ofertaId);
+  if (!oferta) throw '404';
+  return quantitat <= oferta.quantitatDisponible;
 }
-async function restarQuantitatOferta(establimentId,ofertaId,quantitat){
-  let establimentUpdated=await Establiments.findOneAndUpdate({_id:establimentId,'ofertes._id':ofertaId},{
-    $inc:{'ofertes.$.quantitatDisponible':-quantitat}
-  })
-  if(!establimentUpdated) throw '404'
+async function restarQuantitatOferta(establimentId, ofertaId, quantitat) {
+  let establimentUpdated = await Establiments.findOneAndUpdate(
+    { _id: establimentId, 'ofertes._id': ofertaId },
+    {
+      $inc: { 'ofertes.$.quantitatDisponible': -quantitat },
+    }
+  );
+  if (!establimentUpdated) throw '404';
 }
 async function getOfertaUser(establimentId, ofertaId) {
   let establiment = await Establiments.findOne({
@@ -48,7 +54,20 @@ async function createOferta(establimentId, ofertaInfo) {
     myOferta[key] = ofertaInfo[key];
   }
   establiment.ofertes.push(myOferta);
-  return await establiment.save();
+  let ofertaSaved = await establiment.save();
+  let usuarisInteressats =
+    await EstablimentsService.getUsuarisQueTenenEstablimentPreferit(
+      establimentId
+    );
+  usuarisInteressats.forEach((el) => {
+    FirebaseService.sendMessageToUser(
+      el._id,
+      'client',
+      `S'ha creat una oferta nova`,
+      `El teu establiment preferit ${ofertaSaved.nom}, ha creat una oferta nova. Ajuda'l lluitar contra el malbaratament!`
+    );
+  });
+  return ofertaSaved;
 }
 
 async function updateOferta(establimentId, ofertaId, ofertaInfo) {
@@ -56,6 +75,18 @@ async function updateOferta(establimentId, ofertaId, ofertaInfo) {
     { _id: establimentId, 'ofertes._id': ofertaId },
     { $set: { 'ofertes.$': ofertaInfo } }
   );
+  let usuarisInteressats =
+    await EstablimentsService.getUsuarisQueTenenEstablimentPreferit(
+      establimentId
+    );
+  await usuarisInteressats.forEach(async (el) => {
+    await FirebaseService.sendMessageToUser(
+      el._id,
+      'client',
+      `S'ha actualitzat una oferta`,
+      `S'ha actualitzat una oferta del teu establiment preferit ${updated.nom}`
+    );
+  });
   return updated;
 }
 
@@ -75,5 +106,5 @@ module.exports = {
   updateOferta,
   deleteOferta,
   quantitatOferta,
-  restarQuantitatOferta
+  restarQuantitatOferta,
 };
