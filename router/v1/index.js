@@ -50,13 +50,6 @@ router
     establimentsCtrl.createEstabliment
   )
   .put(
-    '/establiments',
-    isAuth,
-    uploadManager.perfilUpload.single('img_perfil'),
-    uploadManager.fondoUpload.single('img_fondo'),
-    establimentsCtrl.updateEstabliment
-  )
-  .put(
     '/establiments/img_perfil',
     isAuth,
     uploadManager.perfilUpload.single('img_perfil'),
@@ -68,7 +61,6 @@ router
     uploadManager.fondoUpload.single('img_fondo'),
     establimentsCtrl.updateImatgeFondo
   )
-  .put('/establiments/direccio', isAuth, establimentsCtrl.updateDireccio)
   .delete('/establiments', isAuth, establimentsCtrl.deleteEstabliment)
   .put(
     '/establiments/contrasenya',
@@ -177,24 +169,19 @@ router
   .get('/comandes/:comandaId', isAuth, comandesCtrl.getComanda)
   .post('/comandes', isAuth,schemaV('newComanda'),
   validate, comandesCtrl.createComanda)
-  //.put('/comandes/:comandaId', isAuth, comandesCtrl.updateComanda)
-  //.delete('/comandes/:comandaId', isAuth, comandesCtrl.deleteComanda);
 
 //FCM
 router
-  .get('/fcm', isAuth, firebaseCtrl.testFCM)
   .post('/fcm', isAuth, firebaseCtrl.addDeleteTokenOfDevice)
   .post('/google', firebaseCtrl.googleLogin);
 
 router
   .get('/perfil', isAuth, perfilCtrl.getPerfil)
   .put('/perfil', isAuth, perfilCtrl.updatePerfil)
-  .get(
-    '/correu/:correu',
+  .get('/correu/:correu',
     perfilCtrl.existeixUsuari,
     perfilCtrl.existeixEstabliment
   ).post('/contrasenya',isAuth,perfilCtrl.canviarContrasenya);
 
-/*router.get().get().post().put().delete();*/
 
 module.exports = router;
