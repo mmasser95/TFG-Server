@@ -29,7 +29,7 @@ async function updateRebost(userId, userType, rebostId, rebostInfo) {
   let model = userType == 'client' ? Users : Establiments;
   let updated = await model.findOneAndUpdate(
     { _id: userId, 'rebosts._id': rebostId },
-    { $set: { 'rebosts.$': rebostInfo } }
+    { 'rebosts.$.nom': rebostInfo.nom }
   );
   return updated;
 }
